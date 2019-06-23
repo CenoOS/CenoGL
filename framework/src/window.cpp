@@ -99,10 +99,18 @@ void Window::Update() {
 	matWorld = this->graphics3D->glMatrixMultiplyMatrix(matRotZ,matRotX);
 	matWorld = this->graphics3D->glMatrixMultiplyMatrix(matWorld,matTrans);
 
+	vLookDir.x = 0; vLookDir.y = 0; vLookDir.z = 1;
+	Vec3D vUp; vUp.x = 0; vUp.y = 1; vUp.z = 0;
+	Vec3D vTarget = this->graphics3D->glVectorAdd(this->vCamera,this->vLookDir);
+	Mat4x4 matCamera = this->graphics3D->glMatrixPointAt(this->vCamera,vTarget,vUp);
+
+	// camera view matrix
+	Mat4x4 matView = this->graphics3D->glMatrixQuickInverse(matCamera);
+
 	std::vector<Triangle> vecTriangleToRaster;
 
 	for(auto tri : this->meshCube.tris){
-		Triangle triProjected, triTransformed;
+		Triangle triProjected, triTransformed,triViewed;
 		tri.color = 0xFFD700FF;
 		triTransformed.p[0] = this->graphics3D->glMatrixMultiplyVector(matWorld,tri.p[0]);
 		triTransformed.p[1] = this->graphics3D->glMatrixMultiplyVector(matWorld,tri.p[1]);
@@ -130,10 +138,15 @@ void Window::Update() {
 			uint32_t color = this->graphics3D->getLumColor(tri.color,dp);
 			triTransformed.color = color;
 
+			// convert world space to view space
+			triViewed.p[0] = this->graphics3D->glMatrixMultiplyVector(matView,triTransformed.p[0]);
+			triViewed.p[1] = this->graphics3D->glMatrixMultiplyVector(matView,triTransformed.p[1]);
+			triViewed.p[2] = this->graphics3D->glMatrixMultiplyVector(matView,triTransformed.p[2]);
+
 			// Project triangles from 3D --> 2D
-			triProjected.p[0] = this->graphics3D->glMatrixMultiplyVector(this->matProjection,triTransformed.p[0]);
-			triProjected.p[1] = this->graphics3D->glMatrixMultiplyVector(this->matProjection,triTransformed.p[1]);
-			triProjected.p[2] = this->graphics3D->glMatrixMultiplyVector(this->matProjection,triTransformed.p[2]);
+			triProjected.p[0] = this->graphics3D->glMatrixMultiplyVector(this->matProjection,triViewed.p[0]);
+			triProjected.p[1] = this->graphics3D->glMatrixMultiplyVector(this->matProjection,triViewed.p[1]);
+			triProjected.p[2] = this->graphics3D->glMatrixMultiplyVector(this->matProjection,triViewed.p[2]);
 			triProjected.color = triTransformed.color;
 
 			// scale into view 

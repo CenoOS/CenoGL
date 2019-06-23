@@ -166,7 +166,7 @@ namespace CenoGL{
 
 		// Construct Dimensioning and Translation Matrix	
 		Mat4x4 matrix;
-		matrix.m[0][0] = newRight.x;	matrix.m[0][1] = newRight.y;	 atrix.m[0][2] = newRight.z;	 matrix.m[0][3] = 0.0f;
+		matrix.m[0][0] = newRight.x;	matrix.m[0][1] = newRight.y;	 matrix.m[0][2] = newRight.z;	 matrix.m[0][3] = 0.0f;
 		matrix.m[1][0] = newUp.x;		 matrix.m[1][1] = newUp.y;		   matrix.m[1][2] = newUp.z;		matrix.m[1][3] = 0.0f;
 		matrix.m[2][0] = newForward.x;	matrix.m[2][1] = newForward.y;	matrix.m[2][2] = newForward.z;	matrix.m[2][3] = 0.0f;
 		matrix.m[3][0] = pos.x;			  matrix.m[3][1] = pos.y;			matrix.m[3][2] = pos.z;			  matrix.m[3][3] = 1.0f;
