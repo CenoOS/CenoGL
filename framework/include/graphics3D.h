@@ -82,6 +82,9 @@ namespace CenoGL
 			Mat4x4 glMatrixMakeTranslation(float x, float y, float z);
 			Mat4x4 glMatrixMakeProjection(float fovDegree, float aspectRatio, float near, float far);
 
+			Mat4x4 glMatrixPointAt(Vec3D &pos,Vec3D &target,Vec3D &up);
+			Mat4x4 glMatrixQuickInverse(Mat4x4 &m);
+
 			
 
 			~Graphics3D();

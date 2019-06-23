@@ -72,7 +72,7 @@ void Window::initPixelMatrixBuffer(){
 	this->graphics2D = new Graphics2D(this->pixelMatrix);
 	this->graphics3D = new Graphics3D(this->pixelMatrix);
 
-	this->meshCube.loadFromObjFiles("teapot.obj");
+	this->meshCube.loadFromObjFiles("axis.obj");
 
 	// Projection Matrix
 	this->matProjection = this->graphics3D->glMatrixMakeProjection(90.0f, (float)this->windowHeight / (float)this->windowWidth, 0.1f, 1000.0f);
@@ -88,11 +88,11 @@ void Window::Update() {
 
 	// Rotation Z and X
 	Mat4x4 matRotZ, matRotX;
-	fTheta +=0.1f;
+	// fTheta +=0.1f;
 	matRotZ = this->graphics3D->glMatrixMakeRotationZ(fTheta);
 	matRotX = this->graphics3D->glMatrixMakeRotationX(fTheta*0.5f);
 
-	Mat4x4 matTrans = this->graphics3D->glMatrixMakeTranslation(0.0f,0.0f,5.0f);
+	Mat4x4 matTrans = this->graphics3D->glMatrixMakeTranslation(0.0f,0.0f,10.0f);
 
 	Mat4x4 matWorld;
 	matWorld = this->graphics3D->glMatrixMakeIdentity();
@@ -116,7 +116,7 @@ void Window::Update() {
 
 		Vec3D cameraRay = this->graphics3D->glVectorSub(triTransformed.p[0],this->vCamera);
 
-		if(this->graphics3D->glVectorDotProduct(normal,cameraRay) < 0.0f){
+		if(this->graphics3D->glVectorDotProduct(normal,cameraRay) <= 0.0f){
 			
 			//Illumination
 			Vec3D lightDirection;
