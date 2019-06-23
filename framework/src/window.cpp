@@ -60,7 +60,7 @@ void Window::initPixelMatrixBuffer(){
     	for (int cols = 0; cols < this->windowWidth; cols ++) {
 			Pixel *pixel = new Pixel();
 			pixel->setColor(new Color(
-				 0x00, 0x00, 0xFF, 0xFF
+				 0x00, 0x00, 0x00, 0xFF
 			));
 			pixels[rows][cols] = *pixel;
     	}
@@ -140,6 +140,7 @@ void Window::Update() {
 
 	for(auto tri : this->meshCube.tris){
 		Triangle triProjected, triTranslated, triRotatedZ, triRotatedZX;
+		tri.color = 0xFF0000FF;
 
 		// Rotate in Z-Axis
 		this->graphics3D->multiplyMatrixVector(tri.p[0], triRotatedZ.p[0], matRotZ);
@@ -157,28 +158,65 @@ void Window::Update() {
 		triTranslated.p[1].z = triRotatedZX.p[1].z + 3.0f;
 		triTranslated.p[2].z = triRotatedZX.p[2].z + 3.0f;
 
-		// Project triangles from 3D --> 2D
-		this->graphics3D->multiplyMatrixVector(triTranslated.p[0], triProjected.p[0], this->matProjection);
-		this->graphics3D->multiplyMatrixVector(triTranslated.p[1], triProjected.p[1],  this->matProjection);
-		this->graphics3D->multiplyMatrixVector(triTranslated.p[2], triProjected.p[2],  this->matProjection);
+		Vec3D normal,line1,line2;
+		line1.x = triTranslated.p[1].x - triTranslated.p[0].x;
+		line1.y = triTranslated.p[1].y - triTranslated.p[0].y;
+		line1.z = triTranslated.p[1].z - triTranslated.p[0].z;
 
-		// Scale into view
-		triProjected.p[0].x += 1.0f; triProjected.p[0].y += 1.0f;
-		triProjected.p[1].x += 1.0f; triProjected.p[1].y += 1.0f;
-		triProjected.p[2].x += 1.0f; triProjected.p[2].y += 1.0f;
-		triProjected.p[0].x *= 0.3f * (float)this->windowWidth;
-		triProjected.p[0].y *= 0.3f * (float)this->windowHeight;
-		triProjected.p[1].x *= 0.3f * (float)this->windowWidth;
-		triProjected.p[1].y *= 0.3f * (float)this->windowHeight;
-		triProjected.p[2].x *= 0.3f * (float)this->windowWidth;
-		triProjected.p[2].y *= 0.3f * (float)this->windowHeight;
+		line2.x = triTranslated.p[2].x - triTranslated.p[0].x;
+		line2.y = triTranslated.p[2].y - triTranslated.p[0].y;
+		line2.z = triTranslated.p[2].z - triTranslated.p[0].z;
 
-		this->graphics2D->drawTriangle(
-			triProjected.p[0].x, triProjected.p[0].y,
-			triProjected.p[1].x, triProjected.p[1].y,
-			triProjected.p[2].x, triProjected.p[2].y,
-			0xFFFFFF00
-		);
+		normal.x = line1.y * line2.z - line1.z * line2.y;
+		normal.y = line1.z * line2.x - line1.x * line2.z;
+		normal.z = line1.x * line2.y - line1.y * line2.x;
+
+		float l = sqrtf(normal.x*normal.x + normal.y*normal.y + normal.z*normal.z);
+		normal.x/=l;	normal.y/=l;	normal.z/=l;
+
+		if(normal.x * (triTranslated.p[0].x-this->vCamera.x) +
+			normal.y * (triTranslated.p[0].y-this->vCamera.y) +
+			normal.z * (triTranslated.p[0].z-this->vCamera.z) < 0.0f){
+			
+			//Illumination
+			Vec3D lightDirection = {0.0f,0.0f,-1.0f};
+			float l = sqrtf(lightDirection.x*lightDirection.x + lightDirection.y*lightDirection.y + lightDirection.z*lightDirection.z);
+			lightDirection.x/=l;	lightDirection.y/=l;	lightDirection.z/=l;
+
+			float dp = normal.x*lightDirection.x + normal.y*lightDirection.y + normal.z*lightDirection.z;
+			uint32_t color = this->graphics3D->getLumColor(tri.color,dp);
+			triTranslated.color = color;
+
+			// Project triangles from 3D --> 2D
+			this->graphics3D->multiplyMatrixVector(triTranslated.p[0], triProjected.p[0], this->matProjection);
+			this->graphics3D->multiplyMatrixVector(triTranslated.p[1], triProjected.p[1],  this->matProjection);
+			this->graphics3D->multiplyMatrixVector(triTranslated.p[2], triProjected.p[2],  this->matProjection);
+			triProjected.color = triTranslated.color;
+
+			// Scale into view
+			triProjected.p[0].x += 1.0f; triProjected.p[0].y += 1.0f;
+			triProjected.p[1].x += 1.0f; triProjected.p[1].y += 1.0f;
+			triProjected.p[2].x += 1.0f; triProjected.p[2].y += 1.0f;
+			triProjected.p[0].x *= 0.4f * (float)this->windowWidth;
+			triProjected.p[0].y *= 0.4f * (float)this->windowHeight;
+			triProjected.p[1].x *= 0.4f * (float)this->windowWidth;
+			triProjected.p[1].y *= 0.4f * (float)this->windowHeight;
+			triProjected.p[2].x *= 0.4f * (float)this->windowWidth;
+			triProjected.p[2].y *= 0.4f * (float)this->windowHeight;
+
+			this->graphics2D->fillTriangle(
+				triProjected.p[0].x, triProjected.p[0].y,
+				triProjected.p[1].x, triProjected.p[1].y,
+				triProjected.p[2].x, triProjected.p[2].y,
+				triProjected.color
+			);
+			this->graphics2D->drawTriangle(
+				triProjected.p[0].x, triProjected.p[0].y,
+				triProjected.p[1].x, triProjected.p[1].y,
+				triProjected.p[2].x, triProjected.p[2].y,
+				0xFFFFFFFF
+			);
+		}
 	}
 }
 
@@ -196,7 +234,7 @@ void Window::Render() {
     SDL_RenderPresent(renderer);
 		for(int i = 0; i< this->pixelMatrix->getHeight(); i++){
       			for(int j = 0; j< this->pixelMatrix->getWidth(); j++){
-					  this->pixelMatrix->setPixel(i,j,new Pixel(new Color(0x00,0x00,0xFF,0x00)));
+					  this->pixelMatrix->setPixel(i,j,new Pixel(new Color(0x00,0x00,0x00,0x00)));
       			}
  			}
 }

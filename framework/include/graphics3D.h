@@ -13,6 +13,7 @@ namespace CenoGL
 
 	struct Triangle{
 		Vec3D p[3];
+		uint32_t color;
 	};
 
 	struct Mesh{
@@ -31,6 +32,7 @@ namespace CenoGL
 			Graphics3D(PixelMatrix* pixels_buf);
 
 			void multiplyMatrixVector(Vec3D &i, Vec3D &o, Mat4x4 &m);
+			uint32_t getLumColor(uint32_t color,float lum);
 			~Graphics3D();
 	};
 }; // CenoGL

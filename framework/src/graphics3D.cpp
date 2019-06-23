@@ -21,6 +21,15 @@ namespace CenoGL{
 		}
 	}
 
+	uint32_t Graphics3D::getLumColor(uint32_t color,float lum){
+		uint32_t r = (uint32_t)(((color >> 24) & 0xFF) * lum);
+		uint32_t g = (uint32_t)(((color >> 16) & 0xFF) * lum);
+		uint32_t b = (uint32_t)(((color >> 8) & 0xFF) * lum);
+		uint32_t a = (uint32_t)(((color >> 0) & 0xFF) * lum);
+
+		return (uint32_t)(r << 24 | g << 16 | b << 8 | a << 0);
+	}
+
 	Graphics3D::~Graphics3D(){
 	}
 

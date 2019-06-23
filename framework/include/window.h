@@ -29,6 +29,7 @@ namespace CenoGL
 
 			Mesh meshCube;
 			Mat4x4 matProjection;
+			Vec3D vCamera;
 
 			
 	
