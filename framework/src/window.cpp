@@ -199,7 +199,6 @@ void Window::Update() {
 			this->graphics3D->multiplyMatrixVector(triTranslated.p[2], triProjected.p[2],  this->matProjection);
 			triProjected.color = triTranslated.color;
 
-
 			// Scale into view
 			triProjected.p[0].x += 1.0f; triProjected.p[0].y += 1.0f;
 			triProjected.p[1].x += 1.0f; triProjected.p[1].y += 1.0f;

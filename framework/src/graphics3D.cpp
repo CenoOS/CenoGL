@@ -9,17 +9,31 @@ namespace CenoGL{
 		this->pixel_matrix_buffer = pixels_buf;
 	}
 
-	void Graphics3D::multiplyMatrixVector(Vec3D &i, Vec3D &o, Mat4x4 &m){
+	Vec3D Graphics3D::glVectorAdd(Vec3D &v1,Vec3D &v2){
+		return {v1.x+v2.x, v1.y+v2.y, v1.y+v2.y};
+	}
+	Vec3D Graphics3D::glVectorSub(Vec3D &v1,Vec3D &v2){}
+	Vec3D Graphics3D::glVectorMul(Vec3D &v1,float k){}
+	Vec3D Graphics3D::glVectorDiv(Vec3D &v1,float k){}
+	float Graphics3D::glVectorDotProduct(Vec3D &v1,Vec3D &v2){}
+	float Graphics3D::glVectorLength(Vec3D &v1,Vec3D &v2){}
+	Vec3D Graphics3D::glVectorNormalise(Vec3D &v1){}
+	Vec3D Graphics3D::glVectorCrossProduct(Vec3D &v1,Vec3D &v2){}
+
+	Vec3D Graphics3D::glMatrixMultiplyVector(Mat4x4 &m, Vec3D &i){
 		o.x = i.x * m.m[0][0] + i.y * m.m[1][0] + i.z * m.m[2][0] + m.m[3][0];
 		o.y = i.x * m.m[0][1] + i.y * m.m[1][1] + i.z * m.m[2][1] + m.m[3][1];
 		o.z = i.x * m.m[0][2] + i.y * m.m[1][2] + i.z * m.m[2][2] + m.m[3][2];
 		float w = i.x * m.m[0][3] + i.y * m.m[1][3] + i.z * m.m[2][3] + m.m[3][3];
 
-		if (w != 0.0f)
-		{
-			o.x /= w; o.y /= w; o.z /= w;
-		}
 	}
+	Vec3D Graphics3D::glMatrixMultiplyMatrix(Mat4x4 &m1, Mat4x4 &m2){}
+	Mat4x4 Graphics3D::glMatrixMakeIdentity(){}
+	Mat4x4 Graphics3D::glMatrixMakeRotationX(float angle){}
+	Mat4x4 Graphics3D::glMatrixMakeRotationY(float angle){}
+	Mat4x4 Graphics3D::glMatrixMakeRotationZ(float angle){}
+	Mat4x4 Graphics3D::glMatrixMakeTranslation(float x, float y, float z){}
+	Mat4x4 Graphics3D::glMatrixMakeProjection(float fovDegree, float aspectRatio, float near, float far){}
 
 	uint32_t Graphics3D::getLumColor(uint32_t color,float lum){
 		uint32_t r = (uint32_t)(((color >> 24) & 0xFF) * lum);

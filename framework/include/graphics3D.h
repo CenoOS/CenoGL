@@ -59,8 +59,28 @@ namespace CenoGL
 		public:
 			Graphics3D(PixelMatrix* pixels_buf);
 
-			void multiplyMatrixVector(Vec3D &i, Vec3D &o, Mat4x4 &m);
 			uint32_t getLumColor(uint32_t color,float lum);
+		
+			Vec3D glVectorAdd(Vec3D &v1,Vec3D &v2); 
+			Vec3D glVectorSub(Vec3D &v1,Vec3D &v2); 
+			Vec3D glVectorMul(Vec3D &v1,float k); 
+			Vec3D glVectorDiv(Vec3D &v1,float k); 
+			float glVectorDotProduct(Vec3D &v1,Vec3D &v2); 
+			float glVectorLength(Vec3D &v1,Vec3D &v2); 
+			Vec3D glVectorNormalise(Vec3D &v1); 
+			Vec3D glVectorCrossProduct(Vec3D &v1,Vec3D &v2); 
+
+			Vec3D glMatrixMultiplyVector(Mat4x4 &m, Vec3D &i);
+			Vec3D glMatrixMultiplyMatrix(Mat4x4 &m1, Mat4x4 &m2);
+			Mat4x4 glMatrixMakeIdentity();
+			Mat4x4 glMatrixMakeRotationX(float angle);
+			Mat4x4 glMatrixMakeRotationY(float angle);
+			Mat4x4 glMatrixMakeRotationZ(float angle);
+			Mat4x4 glMatrixMakeTranslation(float x, float y, float z);
+			Mat4x4 glMatrixMakeProjection(float fovDegree, float aspectRatio, float near, float far);
+
+			
+
 			~Graphics3D();
 	};
 }; // CenoGL
