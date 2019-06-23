@@ -11,7 +11,7 @@ namespace CenoGL
 
 
 	struct Vec3D{
-		float x,y,z;
+		float x,y,z,w;
 	};
 
 	struct Triangle{
@@ -66,12 +66,12 @@ namespace CenoGL
 			Vec3D glVectorMul(Vec3D &v1,float k); 
 			Vec3D glVectorDiv(Vec3D &v1,float k); 
 			float glVectorDotProduct(Vec3D &v1,Vec3D &v2); 
-			float glVectorLength(Vec3D &v1,Vec3D &v2); 
+			float glVectorLength(Vec3D &v);
 			Vec3D glVectorNormalise(Vec3D &v1); 
 			Vec3D glVectorCrossProduct(Vec3D &v1,Vec3D &v2); 
 
 			Vec3D glMatrixMultiplyVector(Mat4x4 &m, Vec3D &i);
-			Vec3D glMatrixMultiplyMatrix(Mat4x4 &m1, Mat4x4 &m2);
+			Mat4x4 glMatrixMultiplyMatrix(Mat4x4 &m1, Mat4x4 &m2);
 			Mat4x4 glMatrixMakeIdentity();
 			Mat4x4 glMatrixMakeRotationX(float angle);
 			Mat4x4 glMatrixMakeRotationY(float angle);
