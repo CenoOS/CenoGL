@@ -72,49 +72,10 @@ void Window::initPixelMatrixBuffer(){
 	this->graphics2D = new Graphics2D(this->pixelMatrix);
 	this->graphics3D = new Graphics3D(this->pixelMatrix);
 
-
-	// mesh init
-	// this->meshCube.tris = {
-	// // SOUTH
-	// 	{ 0.0f, 0.0f, 0.0f,    0.0f, 1.0f, 0.0f,    1.0f, 1.0f, 0.0f },
-	// 	{ 0.0f, 0.0f, 0.0f,    1.0f, 1.0f, 0.0f,    1.0f, 0.0f, 0.0f },
-
-	// 	// EAST                                                      
-	// 	{ 1.0f, 0.0f, 0.0f,    1.0f, 1.0f, 0.0f,    1.0f, 1.0f, 1.0f },
-	// 	{ 1.0f, 0.0f, 0.0f,    1.0f, 1.0f, 1.0f,    1.0f, 0.0f, 1.0f },
-
-	// 	// NORTH                                                     
-	// 	{ 1.0f, 0.0f, 1.0f,    1.0f, 1.0f, 1.0f,    0.0f, 1.0f, 1.0f },
-	// 	{ 1.0f, 0.0f, 1.0f,    0.0f, 1.0f, 1.0f,    0.0f, 0.0f, 1.0f },
-
-	// 	// WEST                                                      
-	// 	{ 0.0f, 0.0f, 1.0f,    0.0f, 1.0f, 1.0f,    0.0f, 1.0f, 0.0f },
-	// 	{ 0.0f, 0.0f, 1.0f,    0.0f, 1.0f, 0.0f,    0.0f, 0.0f, 0.0f },
-
-	// 	// TOP                                                       
-	// 	{ 0.0f, 1.0f, 0.0f,    0.0f, 1.0f, 1.0f,    1.0f, 1.0f, 1.0f },
-	// 	{ 0.0f, 1.0f, 0.0f,    1.0f, 1.0f, 1.0f,    1.0f, 1.0f, 0.0f },
-
-	// 	// BOTTOM                                                    
-	// 	{ 1.0f, 0.0f, 1.0f,    0.0f, 0.0f, 1.0f,    0.0f, 0.0f, 0.0f },
-	// 	{ 1.0f, 0.0f, 1.0f,    0.0f, 0.0f, 0.0f,    1.0f, 0.0f, 0.0f },
-	// };
-
 	this->meshCube.loadFromObjFiles("teapot.obj");
 
 	// Projection Matrix
-	float fNear = 0.1f;
-	float fFar = 1000.0f;
-	float fFov = 90.0f;
-	float fAspectRatio = (float)this->windowHeight / (float)this->windowWidth;
-	float fFovRad = 1.0f / tanf(fFov * 0.5f / 180.0f * 3.14159f);
-
-	this->matProjection.m[0][0] = fAspectRatio * fFovRad;
-	this->matProjection.m[1][1] = fFovRad;
-	this->matProjection.m[2][2] = fFar / (fFar - fNear);
-	this->matProjection.m[3][2] = (-fFar * fNear) / (fFar - fNear);
-	this->matProjection.m[2][3] = 1.0f;
-	this->matProjection.m[3][3] = 0.0f;
+	this->matProjection = this->graphics3D->glMatrixMakeProjection(90.0f, (float)this->windowHeight / (float)this->windowWidth, 0.1f, 1000.0f);
 }
 
 float fTheta = 0.0f;
@@ -125,84 +86,70 @@ void Window::Update() {
 	// this->graphics2D->fillTriangle(120,120,210,120,120,210,0xFF00FF00);
 	// this->graphics2D->fillCircle(210,210,20,0xFFFF0000);
 
+	// Rotation Z and X
 	Mat4x4 matRotZ, matRotX;
 	fTheta +=0.1f;
-	// Rotation Z
-	matRotZ.m[0][0] = cosf(fTheta);
-	matRotZ.m[0][1] = sinf(fTheta);
-	matRotZ.m[1][0] = -sinf(fTheta);
-	matRotZ.m[1][1] = cosf(fTheta);
-	matRotZ.m[2][2] = 1;
-	matRotZ.m[3][3] = 1;
-	// Rotation X
-	matRotX.m[0][0] = 1;
-	matRotX.m[1][1] = cosf(fTheta * 0.5f);
-	matRotX.m[1][2] = sinf(fTheta * 0.5f);
-	matRotX.m[2][1] = -sinf(fTheta * 0.5f);
-	matRotX.m[2][2] = cosf(fTheta * 0.5f);
-	matRotX.m[3][3] = 1;
+	matRotZ = this->graphics3D->glMatrixMakeRotationZ(fTheta);
+	matRotX = this->graphics3D->glMatrixMakeRotationX(fTheta*0.5f);
+
+	Mat4x4 matTrans = this->graphics3D->glMatrixMakeTranslation(0.0f,0.0f,5.0f);
+
+	Mat4x4 matWorld;
+	matWorld = this->graphics3D->glMatrixMakeIdentity();
+	matWorld = this->graphics3D->glMatrixMultiplyMatrix(matRotZ,matRotX);
+	matWorld = this->graphics3D->glMatrixMultiplyMatrix(matWorld,matTrans);
 
 	std::vector<Triangle> vecTriangleToRaster;
 
 	for(auto tri : this->meshCube.tris){
-		Triangle triProjected, triTranslated, triRotatedZ, triRotatedZX;
+		Triangle triProjected, triTransformed;
 		tri.color = 0xFFD700FF;
-
-		// Rotate in Z-Axis
-		this->graphics3D->multiplyMatrixVector(tri.p[0], triRotatedZ.p[0], matRotZ);
-		this->graphics3D->multiplyMatrixVector(tri.p[1], triRotatedZ.p[1], matRotZ);
-		this->graphics3D->multiplyMatrixVector(tri.p[2], triRotatedZ.p[2], matRotZ);
-
-		// Rotate in X-Axis
-		this->graphics3D->multiplyMatrixVector(triRotatedZ.p[0], triRotatedZX.p[0], matRotX);
-		this->graphics3D->multiplyMatrixVector(triRotatedZ.p[1], triRotatedZX.p[1], matRotX);
-		this->graphics3D->multiplyMatrixVector(triRotatedZ.p[2], triRotatedZX.p[2], matRotX);
-
-		// Offset into the screen
-		triTranslated = triRotatedZX;
-		triTranslated.p[0].z = triRotatedZX.p[0].z + 5.0f;
-		triTranslated.p[1].z = triRotatedZX.p[1].z + 5.0f;
-		triTranslated.p[2].z = triRotatedZX.p[2].z + 5.0f;
+		triTransformed.p[0] = this->graphics3D->glMatrixMultiplyVector(matWorld,tri.p[0]);
+		triTransformed.p[1] = this->graphics3D->glMatrixMultiplyVector(matWorld,tri.p[1]);
+		triTransformed.p[2] = this->graphics3D->glMatrixMultiplyVector(matWorld,tri.p[2]);
 
 		Vec3D normal,line1,line2;
-		line1.x = triTranslated.p[1].x - triTranslated.p[0].x;
-		line1.y = triTranslated.p[1].y - triTranslated.p[0].y;
-		line1.z = triTranslated.p[1].z - triTranslated.p[0].z;
+		line1 = this->graphics3D->glVectorSub(triTransformed.p[1],triTransformed.p[0]);
+		line2 = this->graphics3D->glVectorSub(triTransformed.p[2],triTransformed.p[0]);
+		normal = this->graphics3D->glVectorCrossProduct(line1,line2);
+		normal = this->graphics3D->glVectorNormalise(normal);
 
-		line2.x = triTranslated.p[2].x - triTranslated.p[0].x;
-		line2.y = triTranslated.p[2].y - triTranslated.p[0].y;
-		line2.z = triTranslated.p[2].z - triTranslated.p[0].z;
+		Vec3D cameraRay = this->graphics3D->glVectorSub(triTransformed.p[0],this->vCamera);
 
-		normal.x = line1.y * line2.z - line1.z * line2.y;
-		normal.y = line1.z * line2.x - line1.x * line2.z;
-		normal.z = line1.x * line2.y - line1.y * line2.x;
-
-		float l = sqrtf(normal.x*normal.x + normal.y*normal.y + normal.z*normal.z);
-		normal.x/=l;	normal.y/=l;	normal.z/=l;
-
-		if(normal.x * (triTranslated.p[0].x-this->vCamera.x) +
-			normal.y * (triTranslated.p[0].y-this->vCamera.y) +
-			normal.z * (triTranslated.p[0].z-this->vCamera.z) < 0.0f){
+		if(this->graphics3D->glVectorDotProduct(normal,cameraRay) < 0.0f){
 			
 			//Illumination
-			Vec3D lightDirection = {0.0f,0.0f,-1.0f};
-			float l = sqrtf(lightDirection.x*lightDirection.x + lightDirection.y*lightDirection.y + lightDirection.z*lightDirection.z);
-			lightDirection.x/=l;	lightDirection.y/=l;	lightDirection.z/=l;
+			Vec3D lightDirection;
+			lightDirection.x = 0.0f;
+			lightDirection.y = 0.0f;
+			lightDirection.z =-1.0f;
+			lightDirection = this->graphics3D->glVectorNormalise(lightDirection);
 
-			float dp = normal.x*lightDirection.x + normal.y*lightDirection.y + normal.z*lightDirection.z;
+			float dp = fmax(0.1f,this->graphics3D->glVectorDotProduct(lightDirection,normal));
+
 			uint32_t color = this->graphics3D->getLumColor(tri.color,dp);
-			triTranslated.color = color;
+			triTransformed.color = color;
 
 			// Project triangles from 3D --> 2D
-			this->graphics3D->multiplyMatrixVector(triTranslated.p[0], triProjected.p[0], this->matProjection);
-			this->graphics3D->multiplyMatrixVector(triTranslated.p[1], triProjected.p[1],  this->matProjection);
-			this->graphics3D->multiplyMatrixVector(triTranslated.p[2], triProjected.p[2],  this->matProjection);
-			triProjected.color = triTranslated.color;
+			triProjected.p[0] = this->graphics3D->glMatrixMultiplyVector(this->matProjection,triTransformed.p[0]);
+			triProjected.p[1] = this->graphics3D->glMatrixMultiplyVector(this->matProjection,triTransformed.p[1]);
+			triProjected.p[2] = this->graphics3D->glMatrixMultiplyVector(this->matProjection,triTransformed.p[2]);
+			triProjected.color = triTransformed.color;
+
+			// scale into view 
+			triProjected.p[0] = this->graphics3D->glVectorDiv(triProjected.p[0],triProjected.p[0].w);
+			triProjected.p[1] = this->graphics3D->glVectorDiv(triProjected.p[1],triProjected.p[1].w);
+			triProjected.p[2] = this->graphics3D->glVectorDiv(triProjected.p[2],triProjected.p[2].w);
 
 			// Scale into view
-			triProjected.p[0].x += 1.0f; triProjected.p[0].y += 1.0f;
-			triProjected.p[1].x += 1.0f; triProjected.p[1].y += 1.0f;
-			triProjected.p[2].x += 1.0f; triProjected.p[2].y += 1.0f;
+			Vec3D offsetView;
+			offsetView.x = 1.0f;
+			offsetView.y = 1.0f;
+			offsetView.z = 0.0f;
+			triProjected.p[0] = this->graphics3D->glVectorAdd(triProjected.p[0],offsetView);
+			triProjected.p[1] = this->graphics3D->glVectorAdd(triProjected.p[1],offsetView);
+			triProjected.p[2] = this->graphics3D->glVectorAdd(triProjected.p[2],offsetView);
+
 			triProjected.p[0].x *= 0.4f * (float)this->windowWidth;
 			triProjected.p[0].y *= 0.4f * (float)this->windowHeight;
 			triProjected.p[1].x *= 0.4f * (float)this->windowWidth;
