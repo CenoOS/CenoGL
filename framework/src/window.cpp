@@ -73,27 +73,32 @@ void Window::initPixelMatrixBuffer(){
 
 	// mesh init
 	this->meshCube.tris = {
-		// south
-		{0.0f,0.0f,0.0f,	0.0f,1.0f,0.0f,		1.0f,1.0f,0.0f},
-		{0.0f,0.0f,0.0f,	1.0f,1.0f,0.0f,		1.0f,0.0f,0.0f},
-		// east
-		{1.0f,0.0f,0.0f,	1.0f,1.0f,0.0f,		1.0f,1.0f,1.0f},
-		{1.0f,0.0f,0.0f,	1.0f,1.0f,1.0f,		1.0f,0.0f,1.0f},
-		//north
-		{1.0f,0.0f,1.0f,	1.0f,1.0f,1.0f,		0.0f,1.0f,1.0f},
-		{1.0f,0.0f,1.0f,	0.0f,1.0f,1.0f,		0.0f,0.0f,1.0f},
-		// west
-		{0.0f,0.0f,1.0f,	0.0f,1.0f,1.0f,		0.0f,1.0f,0.0f},
-		{0.0f,0.0f,1.0f,	0.0f,1.0f,0.0f,		0.0f,0.0f,0.0f},
-		//top
-		{0.0f,1.0f,0.0f,	0.0f,1.0f,1.0f,		1.0f,1.0f,1.0f},
-		{0.0f,1.0f,0.0f,	1.0f,1.0f,1.0f,		1.0f,1.0f,0.0f},
-		// bottom
-		{1.0f,0.0f,1.0f,	0.0f,0.0f,1.0f,		0.0f,0.0f,0.0f},
-		{1.0f,0.0f,1.0f,	0.0f,0.0f,0.0f,		1.0f,0.0f,0.0f},
+	// SOUTH
+		{ 0.0f, 0.0f, 0.0f,    0.0f, 1.0f, 0.0f,    1.0f, 1.0f, 0.0f },
+		{ 0.0f, 0.0f, 0.0f,    1.0f, 1.0f, 0.0f,    1.0f, 0.0f, 0.0f },
+
+		// EAST                                                      
+		{ 1.0f, 0.0f, 0.0f,    1.0f, 1.0f, 0.0f,    1.0f, 1.0f, 1.0f },
+		{ 1.0f, 0.0f, 0.0f,    1.0f, 1.0f, 1.0f,    1.0f, 0.0f, 1.0f },
+
+		// NORTH                                                     
+		{ 1.0f, 0.0f, 1.0f,    1.0f, 1.0f, 1.0f,    0.0f, 1.0f, 1.0f },
+		{ 1.0f, 0.0f, 1.0f,    0.0f, 1.0f, 1.0f,    0.0f, 0.0f, 1.0f },
+
+		// WEST                                                      
+		{ 0.0f, 0.0f, 1.0f,    0.0f, 1.0f, 1.0f,    0.0f, 1.0f, 0.0f },
+		{ 0.0f, 0.0f, 1.0f,    0.0f, 1.0f, 0.0f,    0.0f, 0.0f, 0.0f },
+
+		// TOP                                                       
+		{ 0.0f, 1.0f, 0.0f,    0.0f, 1.0f, 1.0f,    1.0f, 1.0f, 1.0f },
+		{ 0.0f, 1.0f, 0.0f,    1.0f, 1.0f, 1.0f,    1.0f, 1.0f, 0.0f },
+
+		// BOTTOM                                                    
+		{ 1.0f, 0.0f, 1.0f,    0.0f, 0.0f, 1.0f,    0.0f, 0.0f, 0.0f },
+		{ 1.0f, 0.0f, 1.0f,    0.0f, 0.0f, 0.0f,    1.0f, 0.0f, 0.0f },
 	};
 
-	// projection matrix
+	// Projection Matrix
 	float fNear = 0.1f;
 	float fFar = 1000.0f;
 	float fFov = 90.0f;
@@ -102,8 +107,8 @@ void Window::initPixelMatrixBuffer(){
 
 	this->matProjection.m[0][0] = fAspectRatio * fFovRad;
 	this->matProjection.m[1][1] = fFovRad;
-	this->matProjection.m[2][2] = fFar / (fFar-fNear);
-	this->matProjection.m[3][2] = (-fFar * fNear) / (fFar-fNear);
+	this->matProjection.m[2][2] = fFar / (fFar - fNear);
+	this->matProjection.m[3][2] = (-fFar * fNear) / (fFar - fNear);
 	this->matProjection.m[2][3] = 1.0f;
 	this->matProjection.m[3][3] = 0.0f;
 }
@@ -117,59 +122,61 @@ void Window::Update() {
 
 	Mat4x4 matRotZ, matRotX;
 	fTheta +=0.1f;
-	// rotate Z
+	// Rotation Z
 	matRotZ.m[0][0] = cosf(fTheta);
 	matRotZ.m[0][1] = sinf(fTheta);
 	matRotZ.m[1][0] = -sinf(fTheta);
 	matRotZ.m[1][1] = cosf(fTheta);
 	matRotZ.m[2][2] = 1;
 	matRotZ.m[3][3] = 1;
-	// rotate X
+	// Rotation X
 	matRotX.m[0][0] = 1;
-	matRotX.m[1][1] = sinf(fTheta * 0.5f);
+	matRotX.m[1][1] = cosf(fTheta * 0.5f);
 	matRotX.m[1][2] = sinf(fTheta * 0.5f);
 	matRotX.m[2][1] = -sinf(fTheta * 0.5f);
-	matRotZ.m[2][2] = sinf(fTheta * 0.5f);
-	matRotZ.m[3][3] = 1;
+	matRotX.m[2][2] = cosf(fTheta * 0.5f);
+	matRotX.m[3][3] = 1;
 
 
 	for(auto tri : this->meshCube.tris){
 		Triangle triProjected, triTranslated, triRotatedZ, triRotatedZX;
 
-		this->graphics3D->multiplyMatrixVector(tri.p[0],triRotatedZ.p[0],matRotZ);
-		this->graphics3D->multiplyMatrixVector(tri.p[1],triRotatedZ.p[1],matRotZ);
-		this->graphics3D->multiplyMatrixVector(tri.p[2],triRotatedZ.p[2],matRotZ);
+		// Rotate in Z-Axis
+		this->graphics3D->multiplyMatrixVector(tri.p[0], triRotatedZ.p[0], matRotZ);
+		this->graphics3D->multiplyMatrixVector(tri.p[1], triRotatedZ.p[1], matRotZ);
+		this->graphics3D->multiplyMatrixVector(tri.p[2], triRotatedZ.p[2], matRotZ);
 
-		this->graphics3D->multiplyMatrixVector(triRotatedZ.p[0],triRotatedZX.p[0],matRotX);
-		this->graphics3D->multiplyMatrixVector(triRotatedZ.p[1],triRotatedZX.p[1],matRotX);
-		this->graphics3D->multiplyMatrixVector(triRotatedZ.p[2],triRotatedZX.p[2],matRotX);
-	
+		// Rotate in X-Axis
+		this->graphics3D->multiplyMatrixVector(triRotatedZ.p[0], triRotatedZX.p[0], matRotX);
+		this->graphics3D->multiplyMatrixVector(triRotatedZ.p[1], triRotatedZX.p[1], matRotX);
+		this->graphics3D->multiplyMatrixVector(triRotatedZ.p[2], triRotatedZX.p[2], matRotX);
 
-
+		// Offset into the screen
 		triTranslated = triRotatedZX;
-		triTranslated.p[0].z = tri.p[0].z + 3.0f;
-		triTranslated.p[1].z = tri.p[1].z + 3.0f;
-		triTranslated.p[2].z = tri.p[2].z + 3.0f;
+		triTranslated.p[0].z = triRotatedZX.p[0].z + 3.0f;
+		triTranslated.p[1].z = triRotatedZX.p[1].z + 3.0f;
+		triTranslated.p[2].z = triRotatedZX.p[2].z + 3.0f;
 
-		this->graphics3D->multiplyMatrixVector(triTranslated.p[0],triProjected.p[0],this->matProjection);
-		this->graphics3D->multiplyMatrixVector(triTranslated.p[1],triProjected.p[1],this->matProjection);	
-		this->graphics3D->multiplyMatrixVector(triTranslated.p[2],triProjected.p[2],this->matProjection);
+		// Project triangles from 3D --> 2D
+		this->graphics3D->multiplyMatrixVector(triTranslated.p[0], triProjected.p[0], this->matProjection);
+		this->graphics3D->multiplyMatrixVector(triTranslated.p[1], triProjected.p[1],  this->matProjection);
+		this->graphics3D->multiplyMatrixVector(triTranslated.p[2], triProjected.p[2],  this->matProjection);
 
-		//scale into view
-		triProjected.p[0].x += 1.0f;	triProjected.p[0].y += 1.0f;
-		triProjected.p[1].x += 1.0f;	triProjected.p[1].y += 1.0f;
-		triProjected.p[2].x += 1.0f;	triProjected.p[2].y += 1.0f;
-		triProjected.p[0].x *= 0.3f * (float)this->windowWidth;	
+		// Scale into view
+		triProjected.p[0].x += 1.0f; triProjected.p[0].y += 1.0f;
+		triProjected.p[1].x += 1.0f; triProjected.p[1].y += 1.0f;
+		triProjected.p[2].x += 1.0f; triProjected.p[2].y += 1.0f;
+		triProjected.p[0].x *= 0.3f * (float)this->windowWidth;
 		triProjected.p[0].y *= 0.3f * (float)this->windowHeight;
-		triProjected.p[1].x *= 0.3f * (float)this->windowWidth;	
+		triProjected.p[1].x *= 0.3f * (float)this->windowWidth;
 		triProjected.p[1].y *= 0.3f * (float)this->windowHeight;
 		triProjected.p[2].x *= 0.3f * (float)this->windowWidth;
 		triProjected.p[2].y *= 0.3f * (float)this->windowHeight;
 
 		this->graphics2D->drawTriangle(
-			triProjected.p[0].x,	triProjected.p[0].y,
-			triProjected.p[1].x,	triProjected.p[1].y,
-			triProjected.p[2].x,	triProjected.p[2].y,
+			triProjected.p[0].x, triProjected.p[0].y,
+			triProjected.p[1].x, triProjected.p[1].y,
+			triProjected.p[2].x, triProjected.p[2].y,
 			0xFFFFFF00
 		);
 	}
@@ -218,7 +225,7 @@ int Window::Execute() {
             }
             Update();
             Render();
-            SDL_Delay(40); // Breath
+            SDL_Delay(20); // Breath
         }
         Cleanup();
         return 1;

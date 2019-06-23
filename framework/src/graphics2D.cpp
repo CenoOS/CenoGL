@@ -51,8 +51,8 @@ namespace CenoGL{
 						y = y + 1;
 					}else{
 						y = y - 1;
-						px = px + 2 * (dy1 - dx1);
 					}
+					px = px + 2 * (dy1 - dx1);
 				}
 				mGraphicsBaseHAL->drawPixel(this->pixel_matrix_buffer,x, y,c);
 			}
@@ -250,26 +250,23 @@ namespace CenoGL{
 	}
 
 	void Graphics2D::fillCircle(int xc, int yc, int r, uint32_t c){
-		// int y = r;
-		// int p = 3 - 2 * r;
-		// if (!r) return;
-
-		// auto drawline = [&](int sx, int ex, int ny)
-		// {
-		// 	for (int i = sx; i <= ex; i++)
-		// 		mGraphicsBaseHAL.drawPixel(i, ny, c);
-		// };
-
-		// while (y >= x)
-		// {
-		// 	// Modified to draw scan-lines instead of edges
-		// 	drawline(xc - x, xc + x, yc - y);
-		// 	drawline(xc - y, xc + y, yc - x);
-		// 	drawline(xc - x, xc + x, yc + y);
-		// 	drawline(xc - y, xc + y, yc + x);
-		// 	if (p < 0) p += 4 * x++ + 6;
-		// 	else p += 4 * (x++ - y--) + 10;
-		// }
+		int x = 0;
+		int y = r;
+		int p = 3 - 2 * r;
+		if (!r) {return;};
+		auto drawline = [&](int sx, int ex, int ny){
+			for (int i = sx; i <= ex; i++)
+				mGraphicsBaseHAL->drawPixel(this->pixel_matrix_buffer,i, ny, c);
+		};
+		while (y >= x){
+			// Modified to draw scan-lines instead of edges
+			drawline(xc - x, xc + x, yc - y);
+			drawline(xc - y, xc + y, yc - x);
+			drawline(xc - x, xc + x, yc + y);
+			drawline(xc - y, xc + y, yc + x);
+			if (p < 0) p += 4 * x++ + 6;
+			else p += 4 * (x++ - y--) + 10;
+		}
 	}
 
 }; // CenoGL
