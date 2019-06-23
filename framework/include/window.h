@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 #include "../include/pixel_matrix_buf.h"
 #include "../include/graphics2D.h"
+#include "../include/graphics3D.h"
 
 namespace CenoGL
 {
@@ -22,7 +23,12 @@ namespace CenoGL
 
 			PixelMatrix *pixelMatrix;
 
+
 			Graphics2D *graphics2D;
+			Graphics3D *graphics3D;
+
+			Mesh meshCube;
+			Mat4x4 matProjection;
 
 			
 	

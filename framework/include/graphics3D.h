@@ -1,14 +1,26 @@
 #ifndef __CENO_GL_GRAPHICS_3D_H__
 #define __CENO_GL_GRAPHICS_3D_H__
-
+#include <vector>
 #include "../include/graphics_base_hal.h"
 
 namespace CenoGL
 {
 
 
-	struct vec3d{
+	struct Vec3D{
 		float x,y,z;
+	};
+
+	struct Triangle{
+		Vec3D p[3];
+	};
+
+	struct Mesh{
+		std::vector<Triangle> tris;
+	};
+
+	struct Mat4x4{
+		float m[4][4] = {0};
 	};
 
 	class Graphics3D{
@@ -17,7 +29,8 @@ namespace CenoGL
 			PixelMatrix *pixel_matrix_buffer;
 		public:
 			Graphics3D(PixelMatrix* pixels_buf);
-		
+
+			void multiplyMatrixVector(Vec3D &i, Vec3D &o, Mat4x4 &m);
 			~Graphics3D();
 	};
 }; // CenoGL
