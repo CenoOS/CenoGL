@@ -72,31 +72,33 @@ void Window::initPixelMatrixBuffer(){
 
 
 	// mesh init
-	this->meshCube.tris = {
-	// SOUTH
-		{ 0.0f, 0.0f, 0.0f,    0.0f, 1.0f, 0.0f,    1.0f, 1.0f, 0.0f },
-		{ 0.0f, 0.0f, 0.0f,    1.0f, 1.0f, 0.0f,    1.0f, 0.0f, 0.0f },
+	// this->meshCube.tris = {
+	// // SOUTH
+	// 	{ 0.0f, 0.0f, 0.0f,    0.0f, 1.0f, 0.0f,    1.0f, 1.0f, 0.0f },
+	// 	{ 0.0f, 0.0f, 0.0f,    1.0f, 1.0f, 0.0f,    1.0f, 0.0f, 0.0f },
 
-		// EAST                                                      
-		{ 1.0f, 0.0f, 0.0f,    1.0f, 1.0f, 0.0f,    1.0f, 1.0f, 1.0f },
-		{ 1.0f, 0.0f, 0.0f,    1.0f, 1.0f, 1.0f,    1.0f, 0.0f, 1.0f },
+	// 	// EAST                                                      
+	// 	{ 1.0f, 0.0f, 0.0f,    1.0f, 1.0f, 0.0f,    1.0f, 1.0f, 1.0f },
+	// 	{ 1.0f, 0.0f, 0.0f,    1.0f, 1.0f, 1.0f,    1.0f, 0.0f, 1.0f },
 
-		// NORTH                                                     
-		{ 1.0f, 0.0f, 1.0f,    1.0f, 1.0f, 1.0f,    0.0f, 1.0f, 1.0f },
-		{ 1.0f, 0.0f, 1.0f,    0.0f, 1.0f, 1.0f,    0.0f, 0.0f, 1.0f },
+	// 	// NORTH                                                     
+	// 	{ 1.0f, 0.0f, 1.0f,    1.0f, 1.0f, 1.0f,    0.0f, 1.0f, 1.0f },
+	// 	{ 1.0f, 0.0f, 1.0f,    0.0f, 1.0f, 1.0f,    0.0f, 0.0f, 1.0f },
 
-		// WEST                                                      
-		{ 0.0f, 0.0f, 1.0f,    0.0f, 1.0f, 1.0f,    0.0f, 1.0f, 0.0f },
-		{ 0.0f, 0.0f, 1.0f,    0.0f, 1.0f, 0.0f,    0.0f, 0.0f, 0.0f },
+	// 	// WEST                                                      
+	// 	{ 0.0f, 0.0f, 1.0f,    0.0f, 1.0f, 1.0f,    0.0f, 1.0f, 0.0f },
+	// 	{ 0.0f, 0.0f, 1.0f,    0.0f, 1.0f, 0.0f,    0.0f, 0.0f, 0.0f },
 
-		// TOP                                                       
-		{ 0.0f, 1.0f, 0.0f,    0.0f, 1.0f, 1.0f,    1.0f, 1.0f, 1.0f },
-		{ 0.0f, 1.0f, 0.0f,    1.0f, 1.0f, 1.0f,    1.0f, 1.0f, 0.0f },
+	// 	// TOP                                                       
+	// 	{ 0.0f, 1.0f, 0.0f,    0.0f, 1.0f, 1.0f,    1.0f, 1.0f, 1.0f },
+	// 	{ 0.0f, 1.0f, 0.0f,    1.0f, 1.0f, 1.0f,    1.0f, 1.0f, 0.0f },
 
-		// BOTTOM                                                    
-		{ 1.0f, 0.0f, 1.0f,    0.0f, 0.0f, 1.0f,    0.0f, 0.0f, 0.0f },
-		{ 1.0f, 0.0f, 1.0f,    0.0f, 0.0f, 0.0f,    1.0f, 0.0f, 0.0f },
-	};
+	// 	// BOTTOM                                                    
+	// 	{ 1.0f, 0.0f, 1.0f,    0.0f, 0.0f, 1.0f,    0.0f, 0.0f, 0.0f },
+	// 	{ 1.0f, 0.0f, 1.0f,    0.0f, 0.0f, 0.0f,    1.0f, 0.0f, 0.0f },
+	// };
+
+	this->meshCube.loadFromObjFiles("teapot.obj");
 
 	// Projection Matrix
 	float fNear = 0.1f;
@@ -119,6 +121,7 @@ void Window::Update() {
 	// this->graphics2D->drawCircle(100,100,20,0x00FF0000);
 	// this->graphics2D->drawTriangle(10,10,100,10,10,100,0xFFFFFF00);
 	// this->graphics2D->fillTriangle(120,120,210,120,120,210,0xFF00FF00);
+	// this->graphics2D->fillCircle(210,210,20,0xFFFF0000);
 
 	Mat4x4 matRotZ, matRotX;
 	fTheta +=0.1f;
@@ -140,7 +143,7 @@ void Window::Update() {
 
 	for(auto tri : this->meshCube.tris){
 		Triangle triProjected, triTranslated, triRotatedZ, triRotatedZX;
-		tri.color = 0xFF0000FF;
+		tri.color = 0xFFFFFFFF;
 
 		// Rotate in Z-Axis
 		this->graphics3D->multiplyMatrixVector(tri.p[0], triRotatedZ.p[0], matRotZ);
@@ -154,9 +157,9 @@ void Window::Update() {
 
 		// Offset into the screen
 		triTranslated = triRotatedZX;
-		triTranslated.p[0].z = triRotatedZX.p[0].z + 3.0f;
-		triTranslated.p[1].z = triRotatedZX.p[1].z + 3.0f;
-		triTranslated.p[2].z = triRotatedZX.p[2].z + 3.0f;
+		triTranslated.p[0].z = triRotatedZX.p[0].z + 5.0f;
+		triTranslated.p[1].z = triRotatedZX.p[1].z + 5.0f;
+		triTranslated.p[2].z = triRotatedZX.p[2].z + 5.0f;
 
 		Vec3D normal,line1,line2;
 		line1.x = triTranslated.p[1].x - triTranslated.p[0].x;
@@ -210,12 +213,12 @@ void Window::Update() {
 				triProjected.p[2].x, triProjected.p[2].y,
 				triProjected.color
 			);
-			this->graphics2D->drawTriangle(
-				triProjected.p[0].x, triProjected.p[0].y,
-				triProjected.p[1].x, triProjected.p[1].y,
-				triProjected.p[2].x, triProjected.p[2].y,
-				0xFFFFFFFF
-			);
+			// this->graphics2D->drawTriangle(
+			// 	triProjected.p[0].x, triProjected.p[0].y,
+			// 	triProjected.p[1].x, triProjected.p[1].y,
+			// 	triProjected.p[2].x, triProjected.p[2].y,
+			// 	0xFFFFFFFF
+			// );
 		}
 	}
 }

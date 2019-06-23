@@ -60,6 +60,5 @@ window.o:
 
 clean:
 	rm -rf $(OBJS_DIR)
-	rm -rf $(BUILD_DIR)
+	rm -rf $(BUILD_DIR)/CenoGL
 	mkdir $(OBJS_DIR)
-	mkdir $(BUILD_DIR)
