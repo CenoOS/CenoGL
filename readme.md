@@ -1,1 +1,1 @@
-# a graphics library
+# a 3D graphics engine without graphics lib

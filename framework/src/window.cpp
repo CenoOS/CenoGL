@@ -146,7 +146,7 @@ void Window::Update() {
 
 	for(auto tri : this->meshCube.tris){
 		Triangle triProjected, triTranslated, triRotatedZ, triRotatedZX;
-		tri.color = 0xFFFFFFFF;
+		tri.color = 0xFFD700FF;
 
 		// Rotate in Z-Axis
 		this->graphics3D->multiplyMatrixVector(tri.p[0], triRotatedZ.p[0], matRotZ);
@@ -230,9 +230,9 @@ void Window::Update() {
 			tri.color
 		);
 		// this->graphics2D->drawTriangle(
-		// 	triProjected.p[0].x, triProjected.p[0].y,
-		// 	triProjected.p[1].x, triProjected.p[1].y,
-		// 	triProjected.p[2].x, triProjected.p[2].y,
+		// 	tri.p[0].x, tri.p[0].y,
+		// 	tri.p[1].x, tri.p[1].y,
+		// 	tri.p[2].x, tri.p[2].y,
 		// 	0xFFFFFFFF
 		// );
 	}
