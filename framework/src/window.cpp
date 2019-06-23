@@ -1,5 +1,7 @@
 #include "../include/window.h"
 #include "../include/log.h"
+#include <algorithm>
+
 
 using namespace CenoGL;
 
@@ -140,6 +142,7 @@ void Window::Update() {
 	matRotX.m[2][2] = cosf(fTheta * 0.5f);
 	matRotX.m[3][3] = 1;
 
+	std::vector<Triangle> vecTriangleToRaster;
 
 	for(auto tri : this->meshCube.tris){
 		Triangle triProjected, triTranslated, triRotatedZ, triRotatedZX;
@@ -196,6 +199,7 @@ void Window::Update() {
 			this->graphics3D->multiplyMatrixVector(triTranslated.p[2], triProjected.p[2],  this->matProjection);
 			triProjected.color = triTranslated.color;
 
+
 			// Scale into view
 			triProjected.p[0].x += 1.0f; triProjected.p[0].y += 1.0f;
 			triProjected.p[1].x += 1.0f; triProjected.p[1].y += 1.0f;
@@ -207,19 +211,30 @@ void Window::Update() {
 			triProjected.p[2].x *= 0.4f * (float)this->windowWidth;
 			triProjected.p[2].y *= 0.4f * (float)this->windowHeight;
 
-			this->graphics2D->fillTriangle(
-				triProjected.p[0].x, triProjected.p[0].y,
-				triProjected.p[1].x, triProjected.p[1].y,
-				triProjected.p[2].x, triProjected.p[2].y,
-				triProjected.color
-			);
-			// this->graphics2D->drawTriangle(
-			// 	triProjected.p[0].x, triProjected.p[0].y,
-			// 	triProjected.p[1].x, triProjected.p[1].y,
-			// 	triProjected.p[2].x, triProjected.p[2].y,
-			// 	0xFFFFFFFF
-			// );
+			vecTriangleToRaster.push_back(triProjected);
 		}
+	}
+
+	// sort triangles from back to front
+	sort(vecTriangleToRaster.begin(),vecTriangleToRaster.end(),[](Triangle &t1,Triangle &t2){
+		float z1 = (t1.p[0].z + t1.p[1].z + t1.p[2].z) / 3.0f;
+		float z2 = (t2.p[0].z + t2.p[1].z + t2.p[2].z) / 3.0f;
+		return z1 > z2;
+	});
+
+	for(auto &tri : vecTriangleToRaster){
+		this->graphics2D->fillTriangle(
+			tri.p[0].x, tri.p[0].y,
+			tri.p[1].x, tri.p[1].y,
+			tri.p[2].x, tri.p[2].y,
+			tri.color
+		);
+		// this->graphics2D->drawTriangle(
+		// 	triProjected.p[0].x, triProjected.p[0].y,
+		// 	triProjected.p[1].x, triProjected.p[1].y,
+		// 	triProjected.p[2].x, triProjected.p[2].y,
+		// 	0xFFFFFFFF
+		// );
 	}
 }
 
