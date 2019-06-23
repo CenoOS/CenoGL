@@ -2,13 +2,13 @@
 BASE_DIR=/Users/neroyang/project/Ceno-GL
 
 # include
-INCLUDE_DIR=$(BASE_DIR)/framework/include/
+INCLUDE_DIR=$(BASE_DIR)/gl/include/
 INCLUDE_DIR+=$(BASE_DIR)/app/include/
 
 # app
 SRC=$(wildcard $(BASE_DIR)/app/src/*.cpp)
-# framework
-SRC+=$(wildcard $(BASE_DIR)/framework/src/*.cpp)
+# gl
+SRC+=$(wildcard $(BASE_DIR)/gl/src/*.cpp)
 
 # build dir
 BUILD_DIR=$(BASE_DIR)/app/build
@@ -45,17 +45,17 @@ CenoGL.o:
 	$(CXX) $(CPP_FLAGS) -o $(OBJS_DIR)/CenoGL.o -c $(BASE_DIR)/app/src/CenoGL.cpp $(LIB)
 
 pixel.o:
-	$(CXX) $(CPP_FLAGS) -o $(OBJS_DIR)/pixel.o -c $(BASE_DIR)/framework/src/pixel.cpp $(LIB)
+	$(CXX) $(CPP_FLAGS) -o $(OBJS_DIR)/pixel.o -c $(BASE_DIR)/gl/src/pixel.cpp $(LIB)
 pixel_matrix_buf.o:
-	$(CXX) $(CPP_FLAGS) -o $(OBJS_DIR)/pixel_matrix_buf.o -c $(BASE_DIR)/framework/src/pixel_matrix_buf.cpp $(LIB)
+	$(CXX) $(CPP_FLAGS) -o $(OBJS_DIR)/pixel_matrix_buf.o -c $(BASE_DIR)/gl/src/pixel_matrix_buf.cpp $(LIB)
 graphics2D.o:
-	$(CXX) $(CPP_FLAGS) -o $(OBJS_DIR)/graphics2D.o -c $(BASE_DIR)/framework/src/graphics2D.cpp $(LIB)
+	$(CXX) $(CPP_FLAGS) -o $(OBJS_DIR)/graphics2D.o -c $(BASE_DIR)/gl/src/graphics2D.cpp $(LIB)
 graphics3D.o:
-	$(CXX) $(CPP_FLAGS) -o $(OBJS_DIR)/graphics3D.o -c $(BASE_DIR)/framework/src/graphics3D.cpp $(LIB)
+	$(CXX) $(CPP_FLAGS) -o $(OBJS_DIR)/graphics3D.o -c $(BASE_DIR)/gl/src/graphics3D.cpp $(LIB)
 graphics_base_hal.o:
-	$(CXX) $(CPP_FLAGS) -o $(OBJS_DIR)/graphics_base_hal.o -c $(BASE_DIR)/framework/src/graphics_base_hal.cpp $(LIB)
+	$(CXX) $(CPP_FLAGS) -o $(OBJS_DIR)/graphics_base_hal.o -c $(BASE_DIR)/gl/src/graphics_base_hal.cpp $(LIB)
 window.o:
-	$(CXX) $(CPP_FLAGS) -o $(OBJS_DIR)/window.o -c $(BASE_DIR)/framework/src/window.cpp $(LIB)
+	$(CXX) $(CPP_FLAGS) -o $(OBJS_DIR)/window.o -c $(BASE_DIR)/gl/src/window.cpp $(LIB)
 
 
 clean:
