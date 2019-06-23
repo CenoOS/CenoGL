@@ -86,6 +86,8 @@ void Window::Update() {
 	// this->graphics2D->fillTriangle(120,120,210,120,120,210,0xFF00FF00);
 	// this->graphics2D->fillCircle(210,210,20,0xFFFF0000);
 
+	this->vCamera.x +=0.03;
+
 	// Rotation Z and X
 	Mat4x4 matRotZ, matRotX;
 	// fTheta +=0.1f;
