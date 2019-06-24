@@ -263,7 +263,7 @@ void Window::Update() {
 			for (auto &t : listTriangles)
 			{
 				this->gl2d->fillTriangle(t.p[0].x, t.p[0].y, t.p[1].x, t.p[1].y, t.p[2].x, t.p[2].y, t.color);
-				//DrawTriangle(t.p[0].x, t.p[0].y, t.p[1].x, t.p[1].y, t.p[2].x, t.p[2].y, PIXEL_SOLID, FG_BLACK);
+				this->gl2d->drawTriangle(t.p[0].x, t.p[0].y, t.p[1].x, t.p[1].y, t.p[2].x, t.p[2].y, 0xFFFFFFFF);
 			}
 	}
 }
@@ -280,6 +280,10 @@ void Window::Render() {
         }
     }
     SDL_RenderPresent(renderer);
+	this->clear();
+}
+
+void Window::clear(){
 	for(int i = 0; i< this->pixelMatrix->getHeight(); i++){
 		float r = 34.0f;
 		float g = 89.0f;
@@ -298,7 +302,6 @@ void Window::Render() {
     	}
  	}
 }
-
 void Window::Cleanup() {
     if(renderer) {
         SDL_DestroyRenderer(renderer);

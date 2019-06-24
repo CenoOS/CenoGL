@@ -53,6 +53,8 @@ namespace CenoGL
    		    // Free up resources
    		    void Cleanup();
 
+			void clear();
+
 			template<size_t size>
 			void OnKeyPressed(bool(&keys)[size]);
 
