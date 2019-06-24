@@ -22,6 +22,7 @@ namespace CenoGL
 			char *windowName = "framework window";
 
 			PixelMatrix *pixelMatrix;
+			PixelMatrix *pixelMatrix2; //double buffer
 
 
 			Graphics2D *graphics2D;
@@ -31,6 +32,7 @@ namespace CenoGL
 			Mat4x4 matProjection;
 			Vec3D vCamera;
 			Vec3D vLookDir;
+			float fYaw;
 
 			
 	

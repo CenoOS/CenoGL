@@ -62,7 +62,7 @@ void Window::initPixelMatrixBuffer(){
     	for (int cols = 0; cols < this->windowWidth; cols ++) {
 			Pixel *pixel = new Pixel();
 			pixel->setColor(new Color(
-				 0x00, 0x00, 0x00, 0xFF
+				 0x00, 0xFF, 0xB8, 0xFF
 			));
 			pixels[rows][cols] = *pixel;
     	}
@@ -72,7 +72,7 @@ void Window::initPixelMatrixBuffer(){
 	this->graphics2D = new Graphics2D(this->pixelMatrix);
 	this->graphics3D = new Graphics3D(this->pixelMatrix);
 
-	this->meshCube.loadFromObjFiles("axis.obj");
+	this->meshCube.loadFromObjFiles("teapot.obj");
 
 	// Projection Matrix
 	this->matProjection = this->graphics3D->glMatrixMakeProjection(90.0f, (float)this->windowHeight / (float)this->windowWidth, 0.1f, 1000.0f);
@@ -86,11 +86,9 @@ void Window::Update() {
 	// this->graphics2D->fillTriangle(120,120,210,120,120,210,0xFF00FF00);
 	// this->graphics2D->fillCircle(210,210,20,0xFFFF0000);
 
-	// this->vCamera.x +=0.03;
-
 	// Rotation Z and X
 	Mat4x4 matRotZ, matRotX;
-	// fTheta +=0.1f;
+	fTheta +=0.1f;
 	matRotZ = this->graphics3D->glMatrixMakeRotationZ(fTheta);
 	matRotX = this->graphics3D->glMatrixMakeRotationX(fTheta);
 
@@ -126,12 +124,12 @@ void Window::Update() {
 
 		Vec3D cameraRay = this->graphics3D->glVectorSub(triTransformed.p[0],this->vCamera);
 
-		if(this->graphics3D->glVectorDotProduct(normal,cameraRay) <= 0.0f){
+		if(this->graphics3D->glVectorDotProduct(normal,cameraRay) < 0.0f){
 			
 			//Illumination
 			Vec3D lightDirection;
-			lightDirection.x = 0.0f;
-			lightDirection.y = 0.0f;
+			lightDirection.x = -1.0f;
+			lightDirection.y = 1.0f;
 			lightDirection.z =-1.0f;
 			lightDirection = this->graphics3D->glVectorNormalise(lightDirection);
 
@@ -211,11 +209,23 @@ void Window::Render() {
         }
     }
     SDL_RenderPresent(renderer);
-		for(int i = 0; i< this->pixelMatrix->getHeight(); i++){
-      			for(int j = 0; j< this->pixelMatrix->getWidth(); j++){
-					  this->pixelMatrix->setPixel(i,j,new Pixel(new Color(0x00,0x00,0x00,0x00)));
-      			}
- 			}
+	for(int i = 0; i< this->pixelMatrix->getHeight(); i++){
+		float r = 34.0f;
+		float g = 89.0f;
+		float b = 206.0f;
+    	for(int j = 0; j< this->pixelMatrix->getWidth(); j++){
+		  this->pixelMatrix->setPixel(j,i,new Pixel(new Color(r,g,b,0xFF)));
+		  if(r>0){
+			  r-=0.2f;
+		  }
+		  if(g>0){
+			  g-=0.2f;
+		  }
+		  if(b>0){
+			  b-=0.2f;
+		  }
+    	}
+ 	}
 }
 
 void Window::Cleanup() {
@@ -237,17 +247,31 @@ void Window::OnKeyPressed(bool(&keys)[size]){
 		this->running = false;
 		exit(0);
 	}
-	if(keys[SDLK_a]){
-		this->vCamera.x-=0.1;
+	if(keys[0xFF & SDLK_LEFT]){
+		this->vCamera.y-=0.5;
 	}
-	if(keys[SDLK_d]){
-		this->vCamera.x+=0.1;
+	if(keys[0xFF & SDLK_RIGHT]){
+		this->vCamera.y+=0.5;
 	}
+	if(keys[0xFF & SDLK_UP]){
+		this->vCamera.x-=0.5;
+	}
+	if(keys[0xFF & SDLK_DOWN]){
+		this->vCamera.x+=0.5;
+	}
+	
+	Vec3D vForward = this->graphics3D->glVectorMul(this->vLookDir,8.0f);
 	if(keys[SDLK_w]){
-		this->vCamera.y+=0.1;
+		this->vCamera = this->graphics3D->glVectorAdd(this->vCamera,vForward);
 	}
 	if(keys[SDLK_s]){
-		this->vCamera.y-=0.1;
+		this->vCamera = this->graphics3D->glVectorSub(this->vCamera,vForward);
+	}
+	if(keys[SDLK_a]){
+		this->fYaw-=2.0f;
+	}
+	if(keys[SDLK_d]){
+		this->fYaw+=2.0f;
 	}
 }
 
@@ -262,10 +286,10 @@ int Window::Execute() {
 					running = false;
 				}
 				if (Event.type == SDL_KEYDOWN){
-					keysHeld[Event.key.keysym.sym] = true;	
+					keysHeld[0xFF & Event.key.keysym.sym] = true;	
 				}	
 				if (Event.type == SDL_KEYUP){
-					keysHeld[Event.key.keysym.sym] = false;
+					keysHeld[0xFF & Event.key.keysym.sym] = false;
 				}
         	}
 			this->OnKeyPressed(keysHeld);
