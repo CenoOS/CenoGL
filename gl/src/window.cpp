@@ -99,9 +99,12 @@ void Window::Update() {
 	matWorld = this->graphics3D->glMatrixMultiplyMatrix(matRotZ,matRotX);
 	matWorld = this->graphics3D->glMatrixMultiplyMatrix(matWorld,matTrans);
 
-	vLookDir.x = 0; vLookDir.y = 0; vLookDir.z = 1;
 	Vec3D vUp; vUp.x = 0; vUp.y = 1; vUp.z = 0;
-	Vec3D vTarget = this->graphics3D->glVectorAdd(this->vCamera,this->vLookDir);
+	Vec3D vTarget; vTarget.x = 0; vTarget.y = 0; vTarget.z = 1;
+	Mat4x4 matCmaeraRota = this->graphics3D->glMatrixMakeRotationX(fYaw);
+	this->vLookDir = this->graphics3D->glMatrixMultiplyVector(matCmaeraRota,vTarget);
+	vTarget = this->graphics3D->glVectorAdd(this->vCamera,this->vLookDir);
+
 	Mat4x4 matCamera = this->graphics3D->glMatrixPointAt(this->vCamera,vTarget,vUp);
 
 	// camera view matrix
@@ -260,7 +263,7 @@ void Window::OnKeyPressed(bool(&keys)[size]){
 		this->vCamera.x+=0.5;
 	}
 	
-	Vec3D vForward = this->graphics3D->glVectorMul(this->vLookDir,8.0f);
+	Vec3D vForward = this->graphics3D->glVectorMul(this->vLookDir,0.5f);
 	if(keys[SDLK_w]){
 		this->vCamera = this->graphics3D->glVectorAdd(this->vCamera,vForward);
 	}
@@ -268,10 +271,10 @@ void Window::OnKeyPressed(bool(&keys)[size]){
 		this->vCamera = this->graphics3D->glVectorSub(this->vCamera,vForward);
 	}
 	if(keys[SDLK_a]){
-		this->fYaw-=2.0f;
+		this->fYaw-=0.1f;
 	}
 	if(keys[SDLK_d]){
-		this->fYaw+=2.0f;
+		this->fYaw+=0.1f;
 	}
 }
 
