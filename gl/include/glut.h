@@ -9,6 +9,13 @@ namespace CenoGL
 		private:
 			GraphicsBaseHAL *mGraphicsBaseHAL;
 			PixelMatrix *pixel_matrix_buffer;
+			
+			void (*display)();
+			void (*keyPressed)(int key);
+			void (*mouseMove)(int x,int y);
+			void (*mouseClick)(int key);
+			void (*update)();
+
 		public:
 			glut(PixelMatrix* pixels_buf);
 
