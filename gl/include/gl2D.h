@@ -5,12 +5,12 @@
 
 namespace CenoGL
 {
-	class Graphics2D{
+	class gl2D{
 		private:
 			GraphicsBaseHAL *mGraphicsBaseHAL;
 			PixelMatrix *pixel_matrix_buffer;
 		public:
-			Graphics2D(PixelMatrix* pixels_buf);
+			gl2D(PixelMatrix* pixels_buf);
 			void fill(int x1, int y1, int x2, int y2, uint32_t c);
 			void clip(int &x, int &y);
 			void drawLine(int x1, int y1, int x2, int y2, uint32_t c);
@@ -18,7 +18,7 @@ namespace CenoGL
 			void drawTriangle(int x1, int y1, int x2, int y2, int x3, int y3, uint32_t c);
 			void fillTriangle(int x1, int y1, int x2, int y2, int x3, int y3, uint32_t c);
 			void fillCircle(int xc, int yc, int r, uint32_t c);
-			~Graphics2D();
+			~gl2D();
 	};
 }; // CenoGL
 

@@ -1,15 +1,15 @@
 #include <stdint.h>
 #include <cmath>
-#include "../include/graphics3D.h"
+#include "../include/gl3D.h"
 
 namespace CenoGL{
 
-	Graphics3D::Graphics3D(PixelMatrix* pixels_buf){
+	gl3D::gl3D(PixelMatrix* pixels_buf){
 		this->mGraphicsBaseHAL = new GraphicsBaseHAL();
 		this->pixel_matrix_buffer = pixels_buf;
 	}
 
-	Vec3D Graphics3D::glVectorAdd(Vec3D &v1,Vec3D &v2){
+	Vec3D gl3D::glVectorAdd(Vec3D &v1,Vec3D &v2){
 		Vec3D vec;
 		vec.x =  v1.x+v2.x;
 		vec.y =  v1.y+v2.y;
@@ -17,7 +17,7 @@ namespace CenoGL{
 		return vec;
 	}
 
-	Vec3D Graphics3D::glVectorSub(Vec3D &v1,Vec3D &v2){
+	Vec3D gl3D::glVectorSub(Vec3D &v1,Vec3D &v2){
 		Vec3D vec;
 		vec.x =  v1.x-v2.x;
 		vec.y =  v1.y-v2.y;
@@ -25,7 +25,7 @@ namespace CenoGL{
 		return vec;
 	}
 
-	Vec3D Graphics3D::glVectorMul(Vec3D &v1,float k){
+	Vec3D gl3D::glVectorMul(Vec3D &v1,float k){
 		Vec3D vec;
 		vec.x =  v1.x*k;
 		vec.y =  v1.y*k;
@@ -33,7 +33,7 @@ namespace CenoGL{
 		return vec;
 	}
 
-	Vec3D Graphics3D::glVectorDiv(Vec3D &v1,float k){
+	Vec3D gl3D::glVectorDiv(Vec3D &v1,float k){
 		Vec3D vec;
 		vec.x =  v1.x/k;
 		vec.y =  v1.y/k;
@@ -41,15 +41,15 @@ namespace CenoGL{
 		return vec;
 	}
 
-	float Graphics3D::glVectorDotProduct(Vec3D &v1,Vec3D &v2){
+	float gl3D::glVectorDotProduct(Vec3D &v1,Vec3D &v2){
 		return v1.x*v2.x + v1.y*v2.y+v1.z*v2.z;
 	}
 
-	float Graphics3D::glVectorLength(Vec3D &v){
+	float gl3D::glVectorLength(Vec3D &v){
 		return sqrtf(this->glVectorDotProduct(v,v));
 	}
 
-	Vec3D Graphics3D::glVectorNormalise(Vec3D &v1){
+	Vec3D gl3D::glVectorNormalise(Vec3D &v1){
 		float l = glVectorLength(v1);
 		Vec3D vec;
 		vec.x =  v1.x/l;
@@ -58,7 +58,7 @@ namespace CenoGL{
 		return vec;
 	}
 
-	Vec3D Graphics3D::glVectorCrossProduct(Vec3D &v1,Vec3D &v2){
+	Vec3D gl3D::glVectorCrossProduct(Vec3D &v1,Vec3D &v2){
 		Vec3D v;
 		v.x = v1.y * v2.z - v1.z * v2.y;
 		v.y = v1.z * v2.x - v1.x * v2.z;
@@ -66,7 +66,7 @@ namespace CenoGL{
 		return v;
 	}
 
-	Vec3D Graphics3D::glMatrixMultiplyVector(Mat4x4 &m, Vec3D &i){
+	Vec3D gl3D::glMatrixMultiplyVector(Mat4x4 &m, Vec3D &i){
 		Vec3D v;
 		v.x = i.x * m.m[0][0] + i.y * m.m[1][0] + i.z * m.m[2][0] + i.w * m.m[3][0];
 		v.y = i.x * m.m[0][1] + i.y * m.m[1][1] + i.z * m.m[2][1] + i.w * m.m[3][1];
@@ -75,7 +75,7 @@ namespace CenoGL{
 		return v;
 	}
 
-	Mat4x4 Graphics3D::glMatrixMultiplyMatrix(Mat4x4 &m1, Mat4x4 &m2){
+	Mat4x4 gl3D::glMatrixMultiplyMatrix(Mat4x4 &m1, Mat4x4 &m2){
 		Mat4x4 matrix;
 		for(int c = 0; c < 4; c++){
 			for(int r = 0; r < 4; r++){
@@ -85,7 +85,7 @@ namespace CenoGL{
 		return matrix;
 	}
 
-	Mat4x4 Graphics3D::glMatrixMakeIdentity(){
+	Mat4x4 gl3D::glMatrixMakeIdentity(){
 		Mat4x4 mat;
 		mat.m[0][0] = 1.0f;
 		mat.m[1][1] = 1.0f;
@@ -94,7 +94,7 @@ namespace CenoGL{
 		return mat;
 	}
 
-	Mat4x4 Graphics3D::glMatrixMakeRotationX(float angle){
+	Mat4x4 gl3D::glMatrixMakeRotationX(float angle){
 		Mat4x4 matrix;
 		matrix.m[0][0] = 1.0f;
 		matrix.m[1][1] = cosf(angle);
@@ -105,7 +105,7 @@ namespace CenoGL{
 		return matrix;
 	}
 
-	Mat4x4 Graphics3D::glMatrixMakeRotationY(float angle){
+	Mat4x4 gl3D::glMatrixMakeRotationY(float angle){
 		Mat4x4 matrix;
 		matrix.m[0][0] = cosf(angle);
 		matrix.m[0][2] = sinf(angle);
@@ -116,7 +116,7 @@ namespace CenoGL{
 		return matrix;
 	}
 
-	Mat4x4 Graphics3D::glMatrixMakeRotationZ(float angle){
+	Mat4x4 gl3D::glMatrixMakeRotationZ(float angle){
 		Mat4x4 matrix;
 		matrix.m[0][0] = cosf(angle);
 		matrix.m[0][1] = sinf(angle);
@@ -127,7 +127,7 @@ namespace CenoGL{
 		return matrix;
 	}
 
-	Mat4x4 Graphics3D::glMatrixMakeTranslation(float x, float y, float z){
+	Mat4x4 gl3D::glMatrixMakeTranslation(float x, float y, float z){
 		Mat4x4 matrix;
 		matrix.m[0][0] = 1.0f;
 		matrix.m[1][1] = 1.0f;
@@ -139,7 +139,7 @@ namespace CenoGL{
 		return matrix;
 	}
 
-	Mat4x4 Graphics3D::glMatrixMakeProjection(float fovDegree, float aspectRatio, float near, float far){
+	Mat4x4 gl3D::glMatrixMakeProjection(float fovDegree, float aspectRatio, float near, float far){
 		float fFovRad = 1.0f / tanf(fovDegree * 0.5f / 180.0f * 3.14159f);
 		Mat4x4 matrix;
 		matrix.m[0][0] = aspectRatio * fFovRad;
@@ -151,7 +151,7 @@ namespace CenoGL{
 		return matrix;
 	}
 
-	Mat4x4 Graphics3D::glMatrixPointAt(Vec3D &pos,Vec3D &target,Vec3D &up){
+	Mat4x4 gl3D::glMatrixPointAt(Vec3D &pos,Vec3D &target,Vec3D &up){
 		// caculate new forward direction
 		Vec3D newForward = this->glVectorSub(target,pos);
 		newForward = this->glVectorNormalise(newForward);
@@ -173,7 +173,7 @@ namespace CenoGL{
 		return matrix;
 	}
 
-	Mat4x4 Graphics3D::glMatrixQuickInverse(Mat4x4 &m){
+	Mat4x4 gl3D::glMatrixQuickInverse(Mat4x4 &m){
 		Mat4x4 matrix;
 		matrix.m[0][0] = m.m[0][0]; matrix.m[0][1] = m.m[1][0]; matrix.m[0][2] = m.m[2][0]; matrix.m[0][3] = 0.0f;
 		matrix.m[1][0] = m.m[0][1]; matrix.m[1][1] = m.m[1][1]; matrix.m[1][2] = m.m[2][1]; matrix.m[1][3] = 0.0f;
@@ -186,7 +186,7 @@ namespace CenoGL{
 	}
 
 
-	Vec3D Graphics3D::glVectorIntersectPlane(Vec3D &plane_p, Vec3D &plane_n, Vec3D &lineStart, Vec3D &lineEnd)
+	Vec3D gl3D::glVectorIntersectPlane(Vec3D &plane_p, Vec3D &plane_n, Vec3D &lineStart, Vec3D &lineEnd)
 	{
 		plane_n = this->glVectorNormalise(plane_n);
 		float plane_d = -this->glVectorDotProduct(plane_n, plane_p);
@@ -198,7 +198,7 @@ namespace CenoGL{
 		return this->glVectorAdd(lineStart, lineToIntersect);
 	}
 
-	int Graphics3D::glTriangleClipAgainstPlane(Vec3D plane_p, Vec3D plane_n, Triangle &in_tri, Triangle &out_tri1, Triangle &out_tri2)
+	int gl3D::glTriangleClipAgainstPlane(Vec3D plane_p, Vec3D plane_n, Triangle &in_tri, Triangle &out_tri1, Triangle &out_tri2)
 	{
 		// Make sure plane normal is indeed normal
 		plane_n = this->glVectorNormalise(plane_n);
@@ -305,7 +305,7 @@ namespace CenoGL{
 		}
 	}
 
-	uint32_t Graphics3D::getLumColor(uint32_t color,float lum){
+	uint32_t gl3D::getLumColor(uint32_t color,float lum){
 		// liner light, color_vec * (n.l)
 		uint32_t r = (uint32_t)(((color >> 24) & 0xFF) * lum);
 		uint32_t g = (uint32_t)(((color >> 16) & 0xFF) * lum);
@@ -316,13 +316,13 @@ namespace CenoGL{
 	}
 
 
-	uint32_t Graphics3D::getSpecularColor(uint32_t mspec,uint32_t sspec,float lum){}
-	uint32_t Graphics3D::getDiffuseColor(uint32_t mdiff,uint32_t sdiff, Vec3D normal, Vec3D light){}
-	uint32_t Graphics3D::getAmbientColor(uint32_t mamb,uint32_t gamb){}
+	uint32_t gl3D::getSpecularColor(uint32_t mspec,uint32_t sspec,float lum){}
+	uint32_t gl3D::getDiffuseColor(uint32_t mdiff,uint32_t sdiff, Vec3D normal, Vec3D light){}
+	uint32_t gl3D::getAmbientColor(uint32_t mamb,uint32_t gamb){}
 
 	float getAttenuationFactor(float d){}
 
-	Graphics3D::~Graphics3D(){
+	gl3D::~gl3D(){
 	}
 
 

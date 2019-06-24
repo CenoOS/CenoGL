@@ -55,12 +55,12 @@ namespace CenoGL
 		float m[4][4] = {0};
 	};
 
-	class Graphics3D{
+	class gl3D{
 		private:
 			GraphicsBaseHAL *mGraphicsBaseHAL;
 			PixelMatrix *pixel_matrix_buffer;
 		public:
-			Graphics3D(PixelMatrix* pixels_buf);	
+			gl3D(PixelMatrix* pixels_buf);	
 
 			/**
 			 * mgls : lum 为材料的光泽度,也称为Phong指数
@@ -117,7 +117,7 @@ namespace CenoGL
 
 			
 
-			~Graphics3D();
+			~gl3D();
 	};
 }; // CenoGL
 #endif //! __CENO_GL_GRAPHICS_3D_H__

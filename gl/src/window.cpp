@@ -69,110 +69,110 @@ void Window::initPixelMatrixBuffer(){
     }
 	this->pixelMatrix->setPixels(pixels);
 
-	this->graphics2D = new Graphics2D(this->pixelMatrix);
-	this->graphics3D = new Graphics3D(this->pixelMatrix);
+	this->gl2d = new gl2D(this->pixelMatrix);
+	this->gl3d = new gl3D(this->pixelMatrix);
 
 	this->meshCube.loadFromObjFiles("teapot.obj");
 
 	// Projection Matrix
-	this->matProjection = this->graphics3D->glMatrixMakeProjection(90.0f, (float)this->windowHeight / (float)this->windowWidth, 0.1f, 1000.0f);
+	this->matProjection = this->gl3d->glMatrixMakeProjection(90.0f, (float)this->windowHeight / (float)this->windowWidth, 0.1f, 1000.0f);
 }
 
 float fTheta = 0.0f;
 void Window::Update() {
-	// this->graphics2D->drawLine(0,0,200,200,0xFF000000);
-	// this->graphics2D->drawCircle(100,100,20,0x00FF0000);
-	// this->graphics2D->drawTriangle(10,10,100,10,10,100,0xFFFFFF00);
-	// this->graphics2D->fillTriangle(120,120,210,120,120,210,0xFF00FF00);
-	// this->graphics2D->fillCircle(210,210,20,0xFFFF0000);
+	// this->gl2d->drawLine(0,0,200,200,0xFF000000);
+	// this->gl2d->drawCircle(100,100,20,0x00FF0000);
+	// this->gl2d->drawTriangle(10,10,100,10,10,100,0xFFFFFF00);
+	// this->gl2d->fillTriangle(120,120,210,120,120,210,0xFF00FF00);
+	// this->gl2d->fillCircle(210,210,20,0xFFFF0000);
 
 	// Rotation Z and X
 	Mat4x4 matRotZ, matRotX;
 	fTheta +=0.1f;
-	matRotZ = this->graphics3D->glMatrixMakeRotationZ(fTheta);
-	matRotX = this->graphics3D->glMatrixMakeRotationX(fTheta);
+	matRotZ = this->gl3d->glMatrixMakeRotationZ(fTheta);
+	matRotX = this->gl3d->glMatrixMakeRotationX(fTheta);
 
-	Mat4x4 matTrans = this->graphics3D->glMatrixMakeTranslation(0.0f,0.0f,10.0f);
+	Mat4x4 matTrans = this->gl3d->glMatrixMakeTranslation(0.0f,0.0f,10.0f);
 
 	Mat4x4 matWorld;
-	matWorld = this->graphics3D->glMatrixMakeIdentity();
-	matWorld = this->graphics3D->glMatrixMultiplyMatrix(matRotZ,matRotX);
-	matWorld = this->graphics3D->glMatrixMultiplyMatrix(matWorld,matTrans);
+	matWorld = this->gl3d->glMatrixMakeIdentity();
+	matWorld = this->gl3d->glMatrixMultiplyMatrix(matRotZ,matRotX);
+	matWorld = this->gl3d->glMatrixMultiplyMatrix(matWorld,matTrans);
 
 	Vec3D vUp; vUp.x = 0; vUp.y = 1; vUp.z = 0;
 	Vec3D vTarget; vTarget.x = 0; vTarget.y = 0; vTarget.z = 1;
-	Mat4x4 matCmaeraRota = this->graphics3D->glMatrixMakeRotationX(fYaw);
-	this->vLookDir = this->graphics3D->glMatrixMultiplyVector(matCmaeraRota,vTarget);
-	vTarget = this->graphics3D->glVectorAdd(this->vCamera,this->vLookDir);
+	Mat4x4 matCmaeraRota = this->gl3d->glMatrixMakeRotationX(fYaw);
+	this->vLookDir = this->gl3d->glMatrixMultiplyVector(matCmaeraRota,vTarget);
+	vTarget = this->gl3d->glVectorAdd(this->vCamera,this->vLookDir);
 
-	Mat4x4 matCamera = this->graphics3D->glMatrixPointAt(this->vCamera,vTarget,vUp);
+	Mat4x4 matCamera = this->gl3d->glMatrixPointAt(this->vCamera,vTarget,vUp);
 
 	// camera view matrix
-	Mat4x4 matView = this->graphics3D->glMatrixQuickInverse(matCamera);
+	Mat4x4 matView = this->gl3d->glMatrixQuickInverse(matCamera);
 
 	std::vector<Triangle> vecTriangleToRaster;
 
 	for(auto tri : this->meshCube.tris){
 		Triangle triProjected, triTransformed,triViewed;
 		tri.color = 0xFFD700FF;
-		triTransformed.p[0] = this->graphics3D->glMatrixMultiplyVector(matWorld,tri.p[0]);
-		triTransformed.p[1] = this->graphics3D->glMatrixMultiplyVector(matWorld,tri.p[1]);
-		triTransformed.p[2] = this->graphics3D->glMatrixMultiplyVector(matWorld,tri.p[2]);
+		triTransformed.p[0] = this->gl3d->glMatrixMultiplyVector(matWorld,tri.p[0]);
+		triTransformed.p[1] = this->gl3d->glMatrixMultiplyVector(matWorld,tri.p[1]);
+		triTransformed.p[2] = this->gl3d->glMatrixMultiplyVector(matWorld,tri.p[2]);
 
 		Vec3D normal,line1,line2;
-		line1 = this->graphics3D->glVectorSub(triTransformed.p[1],triTransformed.p[0]);
-		line2 = this->graphics3D->glVectorSub(triTransformed.p[2],triTransformed.p[0]);
-		normal = this->graphics3D->glVectorCrossProduct(line1,line2);
-		normal = this->graphics3D->glVectorNormalise(normal);
+		line1 = this->gl3d->glVectorSub(triTransformed.p[1],triTransformed.p[0]);
+		line2 = this->gl3d->glVectorSub(triTransformed.p[2],triTransformed.p[0]);
+		normal = this->gl3d->glVectorCrossProduct(line1,line2);
+		normal = this->gl3d->glVectorNormalise(normal);
 
-		Vec3D cameraRay = this->graphics3D->glVectorSub(triTransformed.p[0],this->vCamera);
+		Vec3D cameraRay = this->gl3d->glVectorSub(triTransformed.p[0],this->vCamera);
 
-		if(this->graphics3D->glVectorDotProduct(normal,cameraRay) < 0.0f){
+		if(this->gl3d->glVectorDotProduct(normal,cameraRay) < 0.0f){
 			
 			//Illumination
 			Vec3D lightDirection;
 			lightDirection.x = -1.0f;
 			lightDirection.y = 1.0f;
 			lightDirection.z =-1.0f;
-			lightDirection = this->graphics3D->glVectorNormalise(lightDirection);
+			lightDirection = this->gl3d->glVectorNormalise(lightDirection);
 
-			float dp = fmax(0.1f,this->graphics3D->glVectorDotProduct(lightDirection,normal));
+			float dp = fmax(0.1f,this->gl3d->glVectorDotProduct(lightDirection,normal));
 
-			uint32_t color = this->graphics3D->getLumColor(tri.color,dp);
+			uint32_t color = this->gl3d->getLumColor(tri.color,dp);
 			triTransformed.color = color;
 
 			// convert world space to view space
-			triViewed.p[0] = this->graphics3D->glMatrixMultiplyVector(matView,triTransformed.p[0]);
-			triViewed.p[1] = this->graphics3D->glMatrixMultiplyVector(matView,triTransformed.p[1]);
-			triViewed.p[2] = this->graphics3D->glMatrixMultiplyVector(matView,triTransformed.p[2]);
+			triViewed.p[0] = this->gl3d->glMatrixMultiplyVector(matView,triTransformed.p[0]);
+			triViewed.p[1] = this->gl3d->glMatrixMultiplyVector(matView,triTransformed.p[1]);
+			triViewed.p[2] = this->gl3d->glMatrixMultiplyVector(matView,triTransformed.p[2]);
 
 			//clip viewed triangles against near plane
 			int nClippedTriangles = 0;
 			Triangle clipped[2];
 			Vec3D near; near.x = 0.0f; near.y = 0.0f; near.z = 0.1f;
 			Vec3D nor; nor.x = 0.0f; nor.y = 0.0f; nor.z = 1.0f;
-			nClippedTriangles = this->graphics3D->glTriangleClipAgainstPlane(near,nor,triViewed,clipped[0],clipped[1]);
+			nClippedTriangles = this->gl3d->glTriangleClipAgainstPlane(near,nor,triViewed,clipped[0],clipped[1]);
 
 			for(int i = 0; i<nClippedTriangles; i++){
 				// Project triangles from 3D --> 2D
-				triProjected.p[0] = this->graphics3D->glMatrixMultiplyVector(this->matProjection,clipped[i].p[0]);
-				triProjected.p[1] = this->graphics3D->glMatrixMultiplyVector(this->matProjection,clipped[i].p[1]);
-				triProjected.p[2] = this->graphics3D->glMatrixMultiplyVector(this->matProjection,clipped[i].p[2]);
+				triProjected.p[0] = this->gl3d->glMatrixMultiplyVector(this->matProjection,clipped[i].p[0]);
+				triProjected.p[1] = this->gl3d->glMatrixMultiplyVector(this->matProjection,clipped[i].p[1]);
+				triProjected.p[2] = this->gl3d->glMatrixMultiplyVector(this->matProjection,clipped[i].p[2]);
 				triProjected.color = triTransformed.color;
 
 				// scale into view 
-				triProjected.p[0] = this->graphics3D->glVectorDiv(triProjected.p[0],triProjected.p[0].w);
-				triProjected.p[1] = this->graphics3D->glVectorDiv(triProjected.p[1],triProjected.p[1].w);
-				triProjected.p[2] = this->graphics3D->glVectorDiv(triProjected.p[2],triProjected.p[2].w);
+				triProjected.p[0] = this->gl3d->glVectorDiv(triProjected.p[0],triProjected.p[0].w);
+				triProjected.p[1] = this->gl3d->glVectorDiv(triProjected.p[1],triProjected.p[1].w);
+				triProjected.p[2] = this->gl3d->glVectorDiv(triProjected.p[2],triProjected.p[2].w);
 
 				// Scale into view
 				Vec3D offsetView;
 				offsetView.x = 1.0f;
 				offsetView.y = 1.0f;
 				offsetView.z = 0.0f;
-				triProjected.p[0] = this->graphics3D->glVectorAdd(triProjected.p[0],offsetView);
-				triProjected.p[1] = this->graphics3D->glVectorAdd(triProjected.p[1],offsetView);
-				triProjected.p[2] = this->graphics3D->glVectorAdd(triProjected.p[2],offsetView);
+				triProjected.p[0] = this->gl3d->glVectorAdd(triProjected.p[0],offsetView);
+				triProjected.p[1] = this->gl3d->glVectorAdd(triProjected.p[1],offsetView);
+				triProjected.p[2] = this->gl3d->glVectorAdd(triProjected.p[2],offsetView);
 
 				triProjected.p[0].x *= 0.4f * (float)this->windowWidth;
 				triProjected.p[0].y *= 0.4f * (float)this->windowHeight;
@@ -194,13 +194,13 @@ void Window::Update() {
 	});
 
 	for(auto &tri : vecTriangleToRaster){
-		this->graphics2D->fillTriangle(
+		this->gl2d->fillTriangle(
 			tri.p[0].x, tri.p[0].y,
 			tri.p[1].x, tri.p[1].y,
 			tri.p[2].x, tri.p[2].y,
 			tri.color
 		);
-		this->graphics2D->drawTriangle(
+		this->gl2d->drawTriangle(
 			tri.p[0].x, tri.p[0].y,
 			tri.p[1].x, tri.p[1].y,
 			tri.p[2].x, tri.p[2].y,
@@ -272,12 +272,12 @@ void Window::OnKeyPressed(bool(&keys)[size]){
 		this->vCamera.x+=0.5;
 	}
 	
-	Vec3D vForward = this->graphics3D->glVectorMul(this->vLookDir,0.5f);
+	Vec3D vForward = this->gl3d->glVectorMul(this->vLookDir,0.5f);
 	if(keys[SDLK_w]){
-		this->vCamera = this->graphics3D->glVectorAdd(this->vCamera,vForward);
+		this->vCamera = this->gl3d->glVectorAdd(this->vCamera,vForward);
 	}
 	if(keys[SDLK_s]){
-		this->vCamera = this->graphics3D->glVectorSub(this->vCamera,vForward);
+		this->vCamera = this->gl3d->glVectorSub(this->vCamera,vForward);
 	}
 	if(keys[SDLK_a]){
 		this->fYaw-=0.1f;

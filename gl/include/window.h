@@ -3,8 +3,8 @@
 
 #include <SDL2/SDL.h>
 #include "../include/pixel_matrix_buf.h"
-#include "../include/graphics2D.h"
-#include "../include/graphics3D.h"
+#include "../include/gl2D.h"
+#include "../include/gl3D.h"
 
 namespace CenoGL
 {
@@ -25,8 +25,8 @@ namespace CenoGL
 			PixelMatrix *pixelMatrix2; //double buffer
 
 
-			Graphics2D *graphics2D;
-			Graphics3D *graphics3D;
+			gl2D *gl2d;
+			gl3D *gl3d;
 
 			Mesh meshCube;
 			Mat4x4 matProjection;
