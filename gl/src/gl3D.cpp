@@ -23,9 +23,9 @@ namespace CenoGL{
 
 	Vec3D gl3D::glVectorAdd(Vec3D &v1,Vec3D &v2){
 		Vec3D vec;
-		vec.x =  v1.x+v2.x;
-		vec.y =  v1.y+v2.y;
-		vec.z = v1.z + v2.z;
+		vec.x =  v1.x + v2.x;
+		vec.y =  v1.y + v2.y;
+		vec.z =  v1.z + v2.z;
 		return vec;
 	}
 

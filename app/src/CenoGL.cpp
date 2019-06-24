@@ -4,6 +4,6 @@
 
 int main(){
     CenoGL::Window *window = new CenoGL::Window(480, 480, "CenoGL");
-    window->Execute();
+    window->run();
     return 0;
 }

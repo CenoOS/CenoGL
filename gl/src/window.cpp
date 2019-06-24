@@ -16,11 +16,11 @@ Window::Window(int windowWidth, int windowHeight, const char *windowName){
     this->windowName = (char *)windowName;
 }
 
-void Window::OnEvent(SDL_Event* Event) {
+void Window::onEvent(SDL_Event* Event) {
 
 }
 
-bool Window::Init() {
+bool Window::init() {
     if(SDL_Init(SDL_INIT_VIDEO) < 0) {
         Log("Unable to Init SDL: %s", SDL_GetError());
         return false;
@@ -80,7 +80,7 @@ void Window::initPixelMatrixBuffer(){
 }
 
 float fTheta = 0.0f;
-void Window::Update() {
+void Window::update() {
 	// this->gl2d->drawLine(0,0,200,200,0xFF000000);
 	// this->gl2d->drawCircle(100,100,20,0x00FF0000);
 	// this->gl2d->drawTriangle(10,10,100,10,10,100,0xFFFFFF00);
@@ -268,7 +268,7 @@ void Window::Update() {
 	}
 }
 
-void Window::Render() {
+void Window::display() {
     SDL_RenderClear(renderer);
     for(int i = 0; i< this->pixelMatrix->getHeight(); i++){
         for(int j = 0; j< this->pixelMatrix->getWidth(); j++){
@@ -302,7 +302,7 @@ void Window::clear(){
     	}
  	}
 }
-void Window::Cleanup() {
+void Window::cleanUp() {
     if(renderer) {
         SDL_DestroyRenderer(renderer);
         renderer = NULL;
@@ -316,7 +316,7 @@ void Window::Cleanup() {
 }
 
 template<size_t size>
-void Window::OnKeyPressed(bool(&keys)[size]){
+void Window::onKeyPressed(bool(&keys)[size]){
 	if(keys[SDLK_ESCAPE]){
 		this->running = false;
 		exit(0);
@@ -349,13 +349,13 @@ void Window::OnKeyPressed(bool(&keys)[size]){
 	}
 }
 
-int Window::Execute() {
-    if(!Init()) return 0;
+int Window::run() {
+    if(!init()) return 0;
         SDL_Event Event;
 		bool keysHeld[323] = {false};
         while(running) {
             while(SDL_PollEvent(&Event) != 0) {
-                OnEvent(&Event);
+                onEvent(&Event);
                 if(Event.type == SDL_QUIT) {
 					running = false;
 				}
@@ -366,12 +366,12 @@ int Window::Execute() {
 					keysHeld[0xFF & Event.key.keysym.sym] = false;
 				}
         	}
-			this->OnKeyPressed(keysHeld);
-            Update();
-            Render();
+			this->onKeyPressed(keysHeld);
+            update();
+            display();
             SDL_Delay(20); // Breath
         }
-        Cleanup();
+        cleanUp();
         return 1;
 }
 

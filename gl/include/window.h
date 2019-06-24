@@ -39,28 +39,28 @@ namespace CenoGL
    		private:
 
    		    // Capture SDL Events
-   		    void OnEvent(SDL_Event* Event);
+   		    void onEvent(SDL_Event* Event);
 	
    		    // Initialize our SDL game / app
-   		    bool Init();
+   		    bool init();
 	
    		    // Logic loop
-   		    void Update();
+   		    void update();
 	
    		    // Render loop (draw)
-   		    void Render();
+   		    void display();
 	
    		    // Free up resources
-   		    void Cleanup();
+   		    void cleanUp();
 
 			void clear();
 
 			template<size_t size>
-			void OnKeyPressed(bool(&keys)[size]);
+			void onKeyPressed(bool(&keys)[size]);
 
    		public:
 	
-   		    int Execute();
+   		    int run();
 
    		public:
 
