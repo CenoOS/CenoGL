@@ -1,5 +1,6 @@
 #include "../include/window.h"
 #include "../include/log.h"
+#include <list>
 #include <algorithm>
 
 
@@ -88,7 +89,7 @@ void Window::Update() {
 
 	// Rotation Z and X
 	Mat4x4 matRotZ, matRotX;
-	fTheta +=0.1f;
+	// fTheta +=0.1f;
 	matRotZ = this->gl3d->glMatrixMakeRotationZ(fTheta);
 	matRotX = this->gl3d->glMatrixMakeRotationX(fTheta);
 
@@ -193,19 +194,77 @@ void Window::Update() {
 		return z1 > z2;
 	});
 
-	for(auto &tri : vecTriangleToRaster){
-		this->gl2d->fillTriangle(
-			tri.p[0].x, tri.p[0].y,
-			tri.p[1].x, tri.p[1].y,
-			tri.p[2].x, tri.p[2].y,
-			tri.color
-		);
-		this->gl2d->drawTriangle(
-			tri.p[0].x, tri.p[0].y,
-			tri.p[1].x, tri.p[1].y,
-			tri.p[2].x, tri.p[2].y,
-			0xFFFFFFFF
-		);
+	for(auto &triToRaster : vecTriangleToRaster){
+		// Clip triangles against all four screen edges, this could yield
+			// a bunch of triangles, so create a queue that we traverse to 
+			//  ensure we only test new triangles generated against planes
+			Triangle clipped[2];
+			std::list<Triangle> listTriangles;
+
+			// Add initial triangle
+			listTriangles.push_back(triToRaster);
+			int nNewTriangles = 1;
+
+			for (int p = 0; p < 4; p++)
+			{
+				int nTrisToAdd = 0;
+				while (nNewTriangles > 0)
+				{
+					// Take triangle from front of queue
+					Triangle test = listTriangles.front();
+					listTriangles.pop_front();
+					nNewTriangles--;
+
+					// Clip it against a plane. We only need to test each 
+					// subsequent plane, against subsequent new triangles
+					// as all triangles after a plane clip are guaranteed
+					// to lie on the inside of the plane. I like how this
+					// comment is almost completely and utterly justified
+					switch (p)
+					{
+						case 0:	{
+							Vec3D planeP; planeP.x = 0.0f; planeP.y = 0.0f; planeP.z = 0.0f;
+							Vec3D planeN; planeN.x = 0.0f; planeN.y = 1.0f; planeN.z = 0.0f;
+							nTrisToAdd = this->gl3d->glTriangleClipAgainstPlane(planeP, planeN, test, clipped[0], clipped[1]); 
+							break;
+						}
+						case 1:	{
+							Vec3D planeP; planeP.x = 0.0f; planeP.y = (float)this->windowHeight - 1; planeP.z = 0.0f;
+							Vec3D planeN; planeN.x = 0.0f; planeN.y = -1.0f; planeN.z = 0.0f;
+							nTrisToAdd = this->gl3d->glTriangleClipAgainstPlane(planeP, planeN, test, clipped[0], clipped[1]); 
+							break;
+						}
+						case 2:{
+							Vec3D planeP; planeP.x = 0.0f; planeP.y = 0.0f; planeP.z = 0.0f;
+							Vec3D planeN; planeN.x = 1.0f; planeN.y = 0.0f; planeN.z = 0.0f;
+							nTrisToAdd = this->gl3d->glTriangleClipAgainstPlane(planeP, planeN, test, clipped[0], clipped[1]); 
+							break;
+						}
+						case 3:	{
+							Vec3D planeP; planeP.x =(float)this->windowWidth - 1; planeP.y = 0.0f; planeP.z = 0.0f;
+							Vec3D planeN; planeN.x = -1.0f; planeN.y = 0.0f; planeN.z = 0.0f;
+							nTrisToAdd = this->gl3d->glTriangleClipAgainstPlane(planeP, planeN , test, clipped[0], clipped[1]); 
+							break;
+						}
+					}
+
+					// Clipping may yield a variable number of triangles, so
+					// add these new ones to the back of the queue for subsequent
+					// clipping against next planes
+					for (int w = 0; w < nTrisToAdd; w++){
+						listTriangles.push_back(clipped[w]);
+					}
+				}
+				nNewTriangles = listTriangles.size();
+			}
+
+
+			// Draw the transformed, viewed, clipped, projected, sorted, clipped triangles
+			for (auto &t : listTriangles)
+			{
+				this->gl2d->fillTriangle(t.p[0].x, t.p[0].y, t.p[1].x, t.p[1].y, t.p[2].x, t.p[2].y, t.color);
+				//DrawTriangle(t.p[0].x, t.p[0].y, t.p[1].x, t.p[1].y, t.p[2].x, t.p[2].y, PIXEL_SOLID, FG_BLACK);
+			}
 	}
 }
 
