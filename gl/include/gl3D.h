@@ -70,6 +70,8 @@ namespace CenoGL
 
 			Vec3D glVertex3f(float x,float y,float z);
 
+			uint32_t glColor3i(uint32_t r,uint32_t g,uint32_t b);
+
 			Vec3D glVectorAdd(Vec3D &v1,Vec3D &v2); 
 			Vec3D glVectorSub(Vec3D &v1,Vec3D &v2); 
 			Vec3D glVectorMul(Vec3D &v1,float k); 
@@ -79,7 +81,7 @@ namespace CenoGL
 			Vec3D glVectorNormalise(Vec3D &v1); 
 			Vec3D glVectorCrossProduct(Vec3D &v1,Vec3D &v2); 
 
-			Vec3D glMatrixMultiplyVector(Mat4x4 &m, Vec3D &i);
+			Vec3D  glMatrixMultiplyVector(Mat4x4 &m, Vec3D &i);
 			Mat4x4 glMatrixMultiplyMatrix(Mat4x4 &m1, Mat4x4 &m2);
 			Mat4x4 glMatrixMakeIdentity();
 			Mat4x4 glMatrixMakeRotationX(float angle);
@@ -92,7 +94,7 @@ namespace CenoGL
 			Mat4x4 glMatrixQuickInverse(Mat4x4 &m);
 
 			Vec3D glVectorIntersectPlane(Vec3D &plane_p, Vec3D &plane_n, Vec3D &lineStart, Vec3D &lineEnd);
-			int glTriangleClipAgainstPlane(Vec3D plane_p, Vec3D plane_n, Triangle &in_tri, Triangle &out_tri1, Triangle &out_tri2);
+			int   glTriangleClipAgainstPlane(Vec3D plane_p, Vec3D plane_n, Triangle &in_tri, Triangle &out_tri1, Triangle &out_tri2);
 
 			
 

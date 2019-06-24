@@ -17,6 +17,10 @@ namespace CenoGL{
 		return vec;
 	}
 
+	uint32_t gl3D::glColor3i(uint32_t r,uint32_t g,uint32_t b){
+		return ((r & 0xFF) << 24) | ((g & 0xFF) << 16) | ((b & 0xFF) << 8) | 0xFF;
+	}
+
 	Vec3D gl3D::glVectorAdd(Vec3D &v1,Vec3D &v2){
 		Vec3D vec;
 		vec.x =  v1.x+v2.x;
