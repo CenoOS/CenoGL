@@ -90,6 +90,14 @@ namespace CenoGL{
 		return v;
 	}
 
+	Vec3D gl3D::glVectorMultiplyVector(Vec3D &v1,Vec3D &v2){
+		Vec3D vec;
+		vec.x =  v1.x*v2.x;
+		vec.y =  v1.y*v2.y;
+		vec.z =  v1.z*v2.z;
+		return vec;
+	}
+
 	Vec3D gl3D::glMatrixMultiplyVector(Mat4x4 &m, Vec3D &i){
 		Vec3D v;
 		v.x = i.x * m.m[0][0] + i.y * m.m[1][0] + i.z * m.m[2][0] + i.w * m.m[3][0];
@@ -340,36 +348,29 @@ namespace CenoGL{
 	}
 
 
-	uint32_t gl3D::glGetSpecularColor(uint32_t mspec,uint32_t sspec,float lum){
-		Vec3D mSpec = this->glColor1iTov(mspec);
-		Vec3D sSpec = this->glColor1iTov(sspec);
-		Vec3D color = this->glVectorCrossProduct(mSpec,sSpec);
+	Vec3D gl3D::glGetSpecularColor(Vec3D mspec,Vec3D sspec,float lum){
+		Vec3D color = this->glVectorMultiplyVector(mspec,sspec);
 		Vec3D result = this->glVectorMul(color,lum);
 
-		return this->glColorvTo1i(result);
+		return result;
 	}
 
-	uint32_t gl3D::glGetSpecularColor(uint32_t mspec,uint32_t sspec, Vec3D normal, Vec3D camera){
-		float lum = this->glVectorDotProduct(normal,camera);
+	Vec3D gl3D::glGetSpecularColor(Vec3D mspec,Vec3D sspec, Vec3D normal, Vec3D light){
+		float lum = this->glVectorDotProduct(normal,light);
 		return this->glGetSpecularColor(mspec,sspec,lum);
 	}
 
-	uint32_t gl3D::glGetDiffuseColor(uint32_t mdiff,uint32_t sdiff, Vec3D normal, Vec3D light){
+	Vec3D gl3D::glGetDiffuseColor(Vec3D mdiff,Vec3D sdiff, Vec3D normal, Vec3D light){
 		float cos = this->glVectorDotProduct(normal,light);
-		
-		Vec3D mDiff = this->glColor1iTov(mdiff);
-		Vec3D sDiff = this->glColor1iTov(sdiff);
-		Vec3D color = this->glVectorCrossProduct(mDiff,sDiff);
-		Vec3D result = this->glVectorMul(color,cos);
+		Vec3D color = this->glVectorMultiplyVector(mdiff,sdiff);
+		Vec3D result = this->glVectorMul(color,fmax(0.0f,cos));
 
-		return this->glColorvTo1i(result);
+		return result;
 	}
 	
-	uint32_t gl3D::glGetAmbientColor(uint32_t mamb,uint32_t gamb){
-		Vec3D vMamb = this->glColor1iTov(mamb);
-		Vec3D vGamb = this->glColor1iTov(gamb);
-		Vec3D color = this->glVectorCrossProduct(vMamb,vGamb);
-		return this->glColorvTo1i(color);
+	Vec3D gl3D::glGetAmbientColor(Vec3D mamb,Vec3D gamb){
+		Vec3D color = this->glVectorMultiplyVector(mamb,gamb);
+		return color;
 	}
 
 

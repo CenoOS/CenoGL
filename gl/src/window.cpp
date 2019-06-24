@@ -132,15 +132,33 @@ void Window::update() {
 			
 			//Illumination
 			Vec3D lightDirection;
-			lightDirection.x = -1.0f;
-			lightDirection.y = 1.0f;
+			lightDirection.x = 0.0f;
+			lightDirection.y = 0.0f;
 			lightDirection.z =-1.0f;
 			lightDirection = this->gl3d->glVectorNormalise(lightDirection);
 
-			float dp = fmax(0.1f,this->gl3d->glVectorDotProduct(lightDirection,normal));
+			// float dp = fmax(0.1f,this->gl3d->glVectorDotProduct(lightDirection,normal));
+			// uint32_t color = this->gl3d->glGetLumColor(tri.color,dp);
+			// triTransformed.color = color;
 
-			uint32_t color = this->gl3d->glGetLumColor(tri.color,dp);
-			triTransformed.color = color;
+			Vec3D myLightAmbient;      myLightAmbient.x = 0.2f; myLightAmbient.y = 0.2f; myLightAmbient.z = 0.2f;
+   			Vec3D myLightDiffuse;      myLightDiffuse.x = 1.0f; myLightDiffuse.y = 1.0f; myLightDiffuse.z = 1.0f;
+   			Vec3D myLightSpecular;     myLightSpecular.x = 1.0f; myLightSpecular.y = 1.0f; myLightSpecular.z = 1.0f;
+
+   			Vec3D myMaterialAmbient;  myMaterialAmbient.x = 1.0f; myMaterialAmbient.y = 0.5f; myMaterialAmbient.z = 0.0f;
+   			Vec3D myMaterialDiffuse;  myMaterialDiffuse.x = 1.0f; myMaterialDiffuse.y = 0.5f; myMaterialDiffuse.z = 0.0f;
+   			Vec3D myMaterialSpecular; myMaterialSpecular.x = 0.6f; myMaterialSpecular.y = 0.6f; myMaterialSpecular.z = 0.6f;
+
+			Vec3D ambient = this->gl3d->glGetAmbientColor(myMaterialAmbient,myLightAmbient);
+   			Vec3D diffuse = this->gl3d->glGetDiffuseColor(myMaterialDiffuse,myLightDiffuse,normal,lightDirection);
+   			// Vec3D specular =  this->gl3d->glGetSpecularColor(myMaterialSpecular,myLightSpecular,normal,lightDirection);
+
+
+			Vec3D color = this->gl3d->glVectorAdd(ambient,diffuse);
+			Vec3D oc = this->gl3d->glColor1iTov(tri.color);
+			color = this->gl3d->glVectorMultiplyVector(oc,color);
+			// color.x *= 255.0f;	color.y *= 255.0f;	color.z *= 255.0f;
+			triTransformed.color = this->gl3d->glColorvTo1i(color);
 
 			// convert world space to view space
 			triViewed.p[0] = this->gl3d->glMatrixMultiplyVector(matView,triTransformed.p[0]);

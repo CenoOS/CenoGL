@@ -66,10 +66,10 @@ namespace CenoGL
 		public:
 			gl3D(PixelMatrix* pixels_buf);	
 
-			uint32_t glGetSpecularColor(uint32_t mspec,uint32_t sspec, Vec3D normal, Vec3D camera);
-			uint32_t glGetSpecularColor(uint32_t mspec,uint32_t sspec,float lum);
-			uint32_t glGetDiffuseColor(uint32_t mdiff,uint32_t sdiff, Vec3D normal, Vec3D light);
-			uint32_t glGetAmbientColor(uint32_t mamb,uint32_t gamb);
+			Vec3D glGetSpecularColor(Vec3D mspec,Vec3D sspec, Vec3D normal, Vec3D light);
+			Vec3D glGetSpecularColor(Vec3D mspec,Vec3D sspec,float lum);
+			Vec3D glGetDiffuseColor(Vec3D mdiff,Vec3D sdiff, Vec3D normal, Vec3D light);
+			Vec3D glGetAmbientColor(Vec3D mamb,Vec3D gamb);
 			uint32_t glGetLumColor(uint32_t color,float lum);	
 			float     glGetAttenuationFactor(float d);
 
@@ -87,6 +87,7 @@ namespace CenoGL
 			float glVectorLength(Vec3D &v);
 			Vec3D glVectorNormalise(Vec3D &v1); 
 			Vec3D glVectorCrossProduct(Vec3D &v1,Vec3D &v2); 
+			Vec3D glVectorMultiplyVector(Vec3D &v1,Vec3D &v2); 
 
 			Vec3D  glMatrixMultiplyVector(Mat4x4 &m, Vec3D &i);
 			Mat4x4 glMatrixMultiplyMatrix(Mat4x4 &m1, Mat4x4 &m2);
