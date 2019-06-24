@@ -62,37 +62,14 @@ namespace CenoGL
 		public:
 			gl3D(PixelMatrix* pixels_buf);	
 
-			/**
-			 * mgls : lum 为材料的光泽度,也称为Phong指数
-			 * mspec 为材料的反射颜色
-			 * Sspec 是光源的镜面反射颜色
-			 */
 			uint32_t getSpecularColor(uint32_t mspec,uint32_t sspec,float lum);
- 
-			/**
-			 * n 为表面法向量
-			 * l 为指向光源的单位向量
-			 * mdiff 为材料的散射色,即多数人认同的物体颜色
-			 * Sdiff 为光源散射色,一般和光源镜面色Sspec
-			 */
 			uint32_t getDiffuseColor(uint32_t mdiff,uint32_t sdiff, Vec3D normal, Vec3D light);
-
-			/**
-			 * mamb 为材质的环境光分量,它总是等于漫反射分量.
-			 * gamb 为整个场景的环境光照值.
-			 */
 			uint32_t getAmbientColor(uint32_t mamb,uint32_t gamb);
-
 			uint32_t getLumColor(uint32_t color,float lum);	
-
-			/**
-			 * d 定点和光源之间的距离
-			 */
 			float getAttenuationFactor(float d);
 
 			Vec3D glVertex3f(float x,float y,float z);
 
-		
 			Vec3D glVectorAdd(Vec3D &v1,Vec3D &v2); 
 			Vec3D glVectorSub(Vec3D &v1,Vec3D &v2); 
 			Vec3D glVectorMul(Vec3D &v1,float k); 
