@@ -21,6 +21,18 @@ namespace CenoGL{
 		return ((r & 0xFF) << 24) | ((g & 0xFF) << 16) | ((b & 0xFF) << 8) | 0xFF;
 	}
 
+	Vec3D gl3D::glColor1iTov(uint32_t color){
+		Vec3D col;
+		col.x = (float)((color >> 24) & 0xFF);
+		col.y = (float)((color >> 16) & 0xFF);
+		col.z = (float)((color >> 8) & 0xFF);
+		return col;
+	}
+
+	uint32_t gl3D::glColorvTo1i(Vec3D color){
+		return (((int)color.x << 24) & 0xFF000000) | (((int)color.y << 16) & 0xFF0000) | (((int)color.z << 8) & 0xFF00);
+	}
+
 	Vec3D gl3D::glVectorAdd(Vec3D &v1,Vec3D &v2){
 		Vec3D vec;
 		vec.x =  v1.x + v2.x;
@@ -328,11 +340,42 @@ namespace CenoGL{
 	}
 
 
-	uint32_t gl3D::glGetSpecularColor(uint32_t mspec,uint32_t sspec,float lum){}
-	uint32_t gl3D::glGetDiffuseColor(uint32_t mdiff,uint32_t sdiff, Vec3D normal, Vec3D light){}
-	uint32_t gl3D::glGetAmbientColor(uint32_t mamb,uint32_t gamb){}
+	uint32_t gl3D::glGetSpecularColor(uint32_t mspec,uint32_t sspec,float lum){
+		Vec3D mSpec = this->glColor1iTov(mspec);
+		Vec3D sSpec = this->glColor1iTov(sspec);
+		Vec3D color = this->glVectorCrossProduct(mSpec,sSpec);
+		Vec3D result = this->glVectorMul(color,lum);
 
-	float getAttenuationFactor(float d){}
+		return this->glColorvTo1i(result);
+	}
+
+	uint32_t gl3D::glGetSpecularColor(uint32_t mspec,uint32_t sspec, Vec3D normal, Vec3D camera){
+		float lum = this->glVectorDotProduct(normal,camera);
+		return this->glGetSpecularColor(mspec,sspec,lum);
+	}
+
+	uint32_t gl3D::glGetDiffuseColor(uint32_t mdiff,uint32_t sdiff, Vec3D normal, Vec3D light){
+		float cos = this->glVectorDotProduct(normal,light);
+		
+		Vec3D mDiff = this->glColor1iTov(mdiff);
+		Vec3D sDiff = this->glColor1iTov(sdiff);
+		Vec3D color = this->glVectorCrossProduct(mDiff,sDiff);
+		Vec3D result = this->glVectorMul(color,cos);
+
+		return this->glColorvTo1i(result);
+	}
+	
+	uint32_t gl3D::glGetAmbientColor(uint32_t mamb,uint32_t gamb){
+		Vec3D vMamb = this->glColor1iTov(mamb);
+		Vec3D vGamb = this->glColor1iTov(gamb);
+		Vec3D color = this->glVectorCrossProduct(vMamb,vGamb);
+		return this->glColorvTo1i(color);
+	}
+
+
+	float getAttenuationFactor(float d){
+		return 1.0f / (GL_CONSTANT_ATTENUATION + GL_LINEAR_ATTENUATION * d + GL_QUADRATIC_ATTENUATION * d * d);
+	}
 
 	gl3D::~gl3D(){
 	}

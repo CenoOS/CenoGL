@@ -6,6 +6,10 @@
 #include <sstream>
 #include "../include/graphics_base_hal.h"
 
+#define GL_CONSTANT_ATTENUATION    1.0f
+#define GL_LINEAR_ATTENUATION 		0
+#define GL_QUADRATIC_ATTENUATION   0
+
 namespace CenoGL
 {
 
@@ -62,6 +66,7 @@ namespace CenoGL
 		public:
 			gl3D(PixelMatrix* pixels_buf);	
 
+			uint32_t glGetSpecularColor(uint32_t mspec,uint32_t sspec, Vec3D normal, Vec3D camera);
 			uint32_t glGetSpecularColor(uint32_t mspec,uint32_t sspec,float lum);
 			uint32_t glGetDiffuseColor(uint32_t mdiff,uint32_t sdiff, Vec3D normal, Vec3D light);
 			uint32_t glGetAmbientColor(uint32_t mamb,uint32_t gamb);
@@ -71,6 +76,8 @@ namespace CenoGL
 			Vec3D glVertex3f(float x,float y,float z);
 
 			uint32_t glColor3i(uint32_t r,uint32_t g,uint32_t b);
+			Vec3D glColor1iTov(uint32_t color);
+			uint32_t glColorvTo1i(Vec3D color);
 
 			Vec3D glVectorAdd(Vec3D &v1,Vec3D &v2); 
 			Vec3D glVectorSub(Vec3D &v1,Vec3D &v2); 

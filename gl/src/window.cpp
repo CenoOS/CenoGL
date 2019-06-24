@@ -263,7 +263,7 @@ void Window::update() {
 			for (auto &t : listTriangles)
 			{
 				this->gl2d->glFillTriangle(t.p[0].x, t.p[0].y, t.p[1].x, t.p[1].y, t.p[2].x, t.p[2].y, t.color);
-				this->gl2d->glDrawTriangle(t.p[0].x, t.p[0].y, t.p[1].x, t.p[1].y, t.p[2].x, t.p[2].y, 0xFFFFFFFF);
+				// this->gl2d->glDrawTriangle(t.p[0].x, t.p[0].y, t.p[1].x, t.p[1].y, t.p[2].x, t.p[2].y, 0xFFFFFFFF);
 			}
 	}
 }
