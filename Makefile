@@ -30,13 +30,14 @@ LIB=-lstdc++ -ljpeg -lSDL2 -lSDL2main `sdl2-config --cflags --libs` -lpthread
 run:	clean	all
 	$(BUILD_DIR)/CenoGL
  
-all:	CenoGL.o pixel.o pixel_matrix_buf.o   graphics_base_hal.o gl2d.o gl3d.o window.o
+all:	CenoGL.o pixel.o pixel_matrix_buf.o   graphics_base_hal.o gl2d.o gl3d.o glut.o window.o
 	$(CXX) -o $(BUILD_DIR)/CenoGL \
 	$(OBJS_DIR)/CenoGL.o \
 	$(OBJS_DIR)/pixel.o \
 	$(OBJS_DIR)/pixel_matrix_buf.o \
 	$(OBJS_DIR)/gl2d.o \
 	$(OBJS_DIR)/gl3d.o \
+	$(OBJS_DIR)/glut.o \
 	$(OBJS_DIR)/graphics_base_hal.o \
 	$(OBJS_DIR)/window.o \
 	$(LIB)
@@ -52,6 +53,8 @@ gl2d.o:
 	$(CXX) $(CPP_FLAGS) -o $(OBJS_DIR)/gl2d.o -c $(BASE_DIR)/gl/src/gl2d.cpp $(LIB)
 gl3d.o:
 	$(CXX) $(CPP_FLAGS) -o $(OBJS_DIR)/gl3d.o -c $(BASE_DIR)/gl/src/gl3d.cpp $(LIB)
+glut.o:
+	$(CXX) $(CPP_FLAGS) -o $(OBJS_DIR)/glut.o -c $(BASE_DIR)/gl/src/glut.cpp $(LIB)
 graphics_base_hal.o:
 	$(CXX) $(CPP_FLAGS) -o $(OBJS_DIR)/graphics_base_hal.o -c $(BASE_DIR)/gl/src/graphics_base_hal.cpp $(LIB)
 window.o:

@@ -149,7 +149,7 @@ void Window::update() {
    			Vec3D myMaterialDiffuse;  myMaterialDiffuse.x = 1.0f; myMaterialDiffuse.y = 0.5f; myMaterialDiffuse.z = 0.0f;
    			Vec3D myMaterialSpecular; myMaterialSpecular.x = 0.6f; myMaterialSpecular.y = 0.6f; myMaterialSpecular.z = 0.6f;
 
-			Vec3D ambient = this->gl3d->glGetAmbientColor(myMaterialAmbient,myLightAmbient);
+			Vec3D ambient = this->gl3d->glColor1iTov(tri.color);//this->gl3d->glGetAmbientColor(myMaterialAmbient,myLightAmbient);
    			Vec3D diffuse = this->gl3d->glGetDiffuseColor(myMaterialDiffuse,myLightDiffuse,normal,lightDirection);
    			// Vec3D specular =  this->gl3d->glGetSpecularColor(myMaterialSpecular,myLightSpecular,normal,lightDirection);
 
