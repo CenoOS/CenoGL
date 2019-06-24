@@ -313,7 +313,7 @@ namespace CenoGL{
 		}
 	}
 
-	uint32_t gl3D::getLumColor(uint32_t color,float lum){
+	uint32_t gl3D::glGetLumColor(uint32_t color,float lum){
 		// liner light, color_vec * (n.l)
 		uint32_t r = (uint32_t)(((color >> 24) & 0xFF) * lum);
 		uint32_t g = (uint32_t)(((color >> 16) & 0xFF) * lum);
@@ -324,9 +324,9 @@ namespace CenoGL{
 	}
 
 
-	uint32_t gl3D::getSpecularColor(uint32_t mspec,uint32_t sspec,float lum){}
-	uint32_t gl3D::getDiffuseColor(uint32_t mdiff,uint32_t sdiff, Vec3D normal, Vec3D light){}
-	uint32_t gl3D::getAmbientColor(uint32_t mamb,uint32_t gamb){}
+	uint32_t gl3D::glGetSpecularColor(uint32_t mspec,uint32_t sspec,float lum){}
+	uint32_t gl3D::glGetDiffuseColor(uint32_t mdiff,uint32_t sdiff, Vec3D normal, Vec3D light){}
+	uint32_t gl3D::glGetAmbientColor(uint32_t mamb,uint32_t gamb){}
 
 	float getAttenuationFactor(float d){}
 

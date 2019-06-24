@@ -139,7 +139,7 @@ void Window::Update() {
 
 			float dp = fmax(0.1f,this->gl3d->glVectorDotProduct(lightDirection,normal));
 
-			uint32_t color = this->gl3d->getLumColor(tri.color,dp);
+			uint32_t color = this->gl3d->glGetLumColor(tri.color,dp);
 			triTransformed.color = color;
 
 			// convert world space to view space
