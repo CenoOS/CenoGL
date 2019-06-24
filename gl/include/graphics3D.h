@@ -85,6 +85,9 @@ namespace CenoGL
 			Mat4x4 glMatrixPointAt(Vec3D &pos,Vec3D &target,Vec3D &up);
 			Mat4x4 glMatrixQuickInverse(Mat4x4 &m);
 
+			Vec3D glVectorIntersectPlane(Vec3D &plane_p, Vec3D &plane_n, Vec3D &lineStart, Vec3D &lineEnd);
+			int glTriangleClipAgainstPlane(Vec3D plane_p, Vec3D plane_n, Triangle &in_tri, Triangle &out_tri1, Triangle &out_tri2);
+
 			
 
 			~Graphics3D();

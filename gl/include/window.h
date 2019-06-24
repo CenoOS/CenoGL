@@ -51,6 +51,9 @@ namespace CenoGL
    		    // Free up resources
    		    void Cleanup();
 
+			template<size_t size>
+			void OnKeyPressed(bool(&keys)[size]);
+
    		public:
 	
    		    int Execute();

@@ -86,13 +86,13 @@ void Window::Update() {
 	// this->graphics2D->fillTriangle(120,120,210,120,120,210,0xFF00FF00);
 	// this->graphics2D->fillCircle(210,210,20,0xFFFF0000);
 
-	this->vCamera.x +=0.03;
+	// this->vCamera.x +=0.03;
 
 	// Rotation Z and X
 	Mat4x4 matRotZ, matRotX;
 	// fTheta +=0.1f;
 	matRotZ = this->graphics3D->glMatrixMakeRotationZ(fTheta);
-	matRotX = this->graphics3D->glMatrixMakeRotationX(fTheta*0.5f);
+	matRotX = this->graphics3D->glMatrixMakeRotationX(fTheta);
 
 	Mat4x4 matTrans = this->graphics3D->glMatrixMakeTranslation(0.0f,0.0f,10.0f);
 
@@ -231,15 +231,44 @@ void Window::Cleanup() {
     SDL_Quit();
 }
 
+template<size_t size>
+void Window::OnKeyPressed(bool(&keys)[size]){
+	if(keys[SDLK_ESCAPE]){
+		this->running = false;
+		exit(0);
+	}
+	if(keys[SDLK_a]){
+		this->vCamera.x-=0.1;
+	}
+	if(keys[SDLK_d]){
+		this->vCamera.x+=0.1;
+	}
+	if(keys[SDLK_w]){
+		this->vCamera.y+=0.1;
+	}
+	if(keys[SDLK_s]){
+		this->vCamera.y-=0.1;
+	}
+}
 
 int Window::Execute() {
     if(!Init()) return 0;
         SDL_Event Event;
+		bool keysHeld[323] = {false};
         while(running) {
             while(SDL_PollEvent(&Event) != 0) {
                 OnEvent(&Event);
-                if(Event.type == SDL_QUIT) running = false;
-            }
+                if(Event.type == SDL_QUIT) {
+					running = false;
+				}
+				if (Event.type == SDL_KEYDOWN){
+					keysHeld[Event.key.keysym.sym] = true;	
+				}	
+				if (Event.type == SDL_KEYUP){
+					keysHeld[Event.key.keysym.sym] = false;
+				}
+        	}
+			this->OnKeyPressed(keysHeld);
             Update();
             Render();
             SDL_Delay(20); // Breath
