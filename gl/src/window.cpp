@@ -146,34 +146,43 @@ void Window::Update() {
 			triViewed.p[1] = this->graphics3D->glMatrixMultiplyVector(matView,triTransformed.p[1]);
 			triViewed.p[2] = this->graphics3D->glMatrixMultiplyVector(matView,triTransformed.p[2]);
 
-			// Project triangles from 3D --> 2D
-			triProjected.p[0] = this->graphics3D->glMatrixMultiplyVector(this->matProjection,triViewed.p[0]);
-			triProjected.p[1] = this->graphics3D->glMatrixMultiplyVector(this->matProjection,triViewed.p[1]);
-			triProjected.p[2] = this->graphics3D->glMatrixMultiplyVector(this->matProjection,triViewed.p[2]);
-			triProjected.color = triTransformed.color;
+			//clip viewed triangles against near plane
+			int nClippedTriangles = 0;
+			Triangle clipped[2];
+			Vec3D near; near.x = 0.0f; near.y = 0.0f; near.z = 0.1f;
+			Vec3D nor; nor.x = 0.0f; nor.y = 0.0f; nor.z = 1.0f;
+			nClippedTriangles = this->graphics3D->glTriangleClipAgainstPlane(near,nor,triViewed,clipped[0],clipped[1]);
 
-			// scale into view 
-			triProjected.p[0] = this->graphics3D->glVectorDiv(triProjected.p[0],triProjected.p[0].w);
-			triProjected.p[1] = this->graphics3D->glVectorDiv(triProjected.p[1],triProjected.p[1].w);
-			triProjected.p[2] = this->graphics3D->glVectorDiv(triProjected.p[2],triProjected.p[2].w);
+			for(int i = 0; i<nClippedTriangles; i++){
+				// Project triangles from 3D --> 2D
+				triProjected.p[0] = this->graphics3D->glMatrixMultiplyVector(this->matProjection,clipped[i].p[0]);
+				triProjected.p[1] = this->graphics3D->glMatrixMultiplyVector(this->matProjection,clipped[i].p[1]);
+				triProjected.p[2] = this->graphics3D->glMatrixMultiplyVector(this->matProjection,clipped[i].p[2]);
+				triProjected.color = triTransformed.color;
 
-			// Scale into view
-			Vec3D offsetView;
-			offsetView.x = 1.0f;
-			offsetView.y = 1.0f;
-			offsetView.z = 0.0f;
-			triProjected.p[0] = this->graphics3D->glVectorAdd(triProjected.p[0],offsetView);
-			triProjected.p[1] = this->graphics3D->glVectorAdd(triProjected.p[1],offsetView);
-			triProjected.p[2] = this->graphics3D->glVectorAdd(triProjected.p[2],offsetView);
+				// scale into view 
+				triProjected.p[0] = this->graphics3D->glVectorDiv(triProjected.p[0],triProjected.p[0].w);
+				triProjected.p[1] = this->graphics3D->glVectorDiv(triProjected.p[1],triProjected.p[1].w);
+				triProjected.p[2] = this->graphics3D->glVectorDiv(triProjected.p[2],triProjected.p[2].w);
 
-			triProjected.p[0].x *= 0.4f * (float)this->windowWidth;
-			triProjected.p[0].y *= 0.4f * (float)this->windowHeight;
-			triProjected.p[1].x *= 0.4f * (float)this->windowWidth;
-			triProjected.p[1].y *= 0.4f * (float)this->windowHeight;
-			triProjected.p[2].x *= 0.4f * (float)this->windowWidth;
-			triProjected.p[2].y *= 0.4f * (float)this->windowHeight;
+				// Scale into view
+				Vec3D offsetView;
+				offsetView.x = 1.0f;
+				offsetView.y = 1.0f;
+				offsetView.z = 0.0f;
+				triProjected.p[0] = this->graphics3D->glVectorAdd(triProjected.p[0],offsetView);
+				triProjected.p[1] = this->graphics3D->glVectorAdd(triProjected.p[1],offsetView);
+				triProjected.p[2] = this->graphics3D->glVectorAdd(triProjected.p[2],offsetView);
 
-			vecTriangleToRaster.push_back(triProjected);
+				triProjected.p[0].x *= 0.4f * (float)this->windowWidth;
+				triProjected.p[0].y *= 0.4f * (float)this->windowHeight;
+				triProjected.p[1].x *= 0.4f * (float)this->windowWidth;
+				triProjected.p[1].y *= 0.4f * (float)this->windowHeight;
+				triProjected.p[2].x *= 0.4f * (float)this->windowWidth;
+				triProjected.p[2].y *= 0.4f * (float)this->windowHeight;
+
+				vecTriangleToRaster.push_back(triProjected);
+			}
 		}
 	}
 
@@ -191,12 +200,12 @@ void Window::Update() {
 			tri.p[2].x, tri.p[2].y,
 			tri.color
 		);
-		// this->graphics2D->drawTriangle(
-		// 	tri.p[0].x, tri.p[0].y,
-		// 	tri.p[1].x, tri.p[1].y,
-		// 	tri.p[2].x, tri.p[2].y,
-		// 	0xFFFFFFFF
-		// );
+		this->graphics2D->drawTriangle(
+			tri.p[0].x, tri.p[0].y,
+			tri.p[1].x, tri.p[1].y,
+			tri.p[2].x, tri.p[2].y,
+			0xFFFFFFFF
+		);
 	}
 }
 
