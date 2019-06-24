@@ -9,9 +9,9 @@ namespace CenoGL{
 		this->pixel_matrix_buffer = pixels_buf;
 	}
 
-	void gl2D::fill(int x1, int y1, int x2, int y2, uint32_t c){
-		clip(x1, y1);
-		clip(x2, y2);
+	void gl2D::glFill(int x1, int y1, int x2, int y2, uint32_t c){
+		glClip(x1, y1);
+		glClip(x2, y2);
 		for (int x = x1; x < x2; x++){
 			for (int y = y1; y < y2; y++){
 				mGraphicsBaseHAL->drawPixel(this->pixel_matrix_buffer,x, y,c);
@@ -19,11 +19,11 @@ namespace CenoGL{
 		}
 	}
 
-	void gl2D::clip(int &x, int &y){
+	void gl2D::glClip(int &x, int &y){
 
 	}
 
-	void gl2D::drawLine(int x1, int y1, int x2, int y2, uint32_t c){
+	void gl2D::glDrawLine(int x1, int y1, int x2, int y2, uint32_t c){
 		int x, y, dx, dy, dx1, dy1, px, py, xe, ye, i;
 		dx = x2 - x1;
 		dy = y2 - y1;
@@ -84,7 +84,7 @@ namespace CenoGL{
 		}
 	}
 
-	void gl2D::drawCircle(int xc, int yc, int r, uint32_t c){
+	void gl2D::glDrawCircle(int xc, int yc, int r, uint32_t c){
 		int x = 0;
 		int y = r;
 		int p = 3 - 2 * r;
@@ -107,13 +107,13 @@ namespace CenoGL{
 		}
 	}
 
-	void gl2D::drawTriangle(int x1, int y1, int x2, int y2, int x3, int y3, uint32_t c){
-		drawLine(x1, y1, x2, y2, c);
-		drawLine(x2, y2, x3, y3, c);
-		drawLine(x3, y3, x1, y1, c);
+	void gl2D::glDrawTriangle(int x1, int y1, int x2, int y2, int x3, int y3, uint32_t c){
+		glDrawLine(x1, y1, x2, y2, c);
+		glDrawLine(x2, y2, x3, y3, c);
+		glDrawLine(x3, y3, x1, y1, c);
 	}
 
-	void gl2D::fillTriangle(int x1, int y1, int x2, int y2, int x3, int y3, uint32_t c){
+	void gl2D::glFillTriangle(int x1, int y1, int x2, int y2, int x3, int y3, uint32_t c){
 		auto SWAP = [](int &x, int &y) { int t = x; x = y; y = t; };
 		auto drawline = [&](int sx, int ex, int ny) { for (int i = sx; i <= ex; i++) mGraphicsBaseHAL->drawPixel(this->pixel_matrix_buffer,i, ny, c); };
 
@@ -249,7 +249,7 @@ namespace CenoGL{
 		}
 	}
 
-	void gl2D::fillCircle(int xc, int yc, int r, uint32_t c){
+	void gl2D::glFillCircle(int xc, int yc, int r, uint32_t c){
 		int x = 0;
 		int y = r;
 		int p = 3 - 2 * r;

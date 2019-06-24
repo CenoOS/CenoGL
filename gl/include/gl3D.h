@@ -90,6 +90,8 @@ namespace CenoGL
 			 */
 			float getAttenuationFactor(float d);
 
+			Vec3D glVertex3f(float x,float y,float z);
+
 		
 			Vec3D glVectorAdd(Vec3D &v1,Vec3D &v2); 
 			Vec3D glVectorSub(Vec3D &v1,Vec3D &v2); 

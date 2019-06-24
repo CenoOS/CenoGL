@@ -9,6 +9,14 @@ namespace CenoGL{
 		this->pixel_matrix_buffer = pixels_buf;
 	}
 
+	Vec3D gl3D::glVertex3f(float x,float y,float z){
+		Vec3D vec;
+		vec.x =  x;
+		vec.y =  y;
+		vec.z =  z;
+		return vec;
+	}
+
 	Vec3D gl3D::glVectorAdd(Vec3D &v1,Vec3D &v2){
 		Vec3D vec;
 		vec.x =  v1.x+v2.x;
