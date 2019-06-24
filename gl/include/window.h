@@ -3,8 +3,8 @@
 
 #include <SDL2/SDL.h>
 #include "../include/pixel_matrix_buf.h"
-#include "../include/gl2D.h"
-#include "../include/gl3D.h"
+#include "../include/gl2d.h"
+#include "../include/gl3d.h"
 
 namespace CenoGL
 {

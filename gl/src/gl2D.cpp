@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include <cmath>
-#include "../include/gl2D.h"
+#include "../include/gl2d.h"
 
 namespace CenoGL{
 
