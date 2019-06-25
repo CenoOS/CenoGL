@@ -151,7 +151,7 @@ void Window::update() {
 
 			Vec3D ambient = this->gl3d->glGetAmbientColor(myMaterialAmbient,myLightAmbient);
    			Vec3D diffuse = this->gl3d->glGetDiffuseColor(myMaterialDiffuse,myLightDiffuse,normal,lightDirection);
-   			Vec3D specular =  this->gl3d->glGetSpecularColor(myMaterialSpecular,myLightSpecular,normal,lightDirection,50.0f);
+   			Vec3D specular =  this->gl3d->glGetSpecularColor(myMaterialSpecular,myLightSpecular,normal,lightDirection,90.0f);
 
 			Vec3D color = this->gl3d->glVectorAdd(ambient,diffuse);
 			color = this->gl3d->glVectorAdd(color,specular);
