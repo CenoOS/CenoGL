@@ -1,6 +1,8 @@
 # a 3D graphics engine without graphics lib
 
-## how to build:
+## Third-party library dependency:
+[SDL2](http://www.libsdl.org/)
+## Build & Run:
 ``` bash
 make run
 ```
