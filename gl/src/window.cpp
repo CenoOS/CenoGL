@@ -73,7 +73,7 @@ void Window::initPixelMatrixBuffer(){
 	this->gl2d = new gl2D(this->pixelMatrix);
 	this->gl3d = new gl3D(this->pixelMatrix);
 
-	this->meshCube.loadFromObjFiles("teapot.obj");
+	this->meshCube.loadFromObjFiles("bunny_n.obj");
 
 	// Projection Matrix
 	this->matProjection = this->gl3d->glMatrixMakeProjection(90.0f, (float)this->windowHeight / (float)this->windowWidth, 0.1f, 1000.0f);
@@ -102,7 +102,7 @@ void Window::update() {
 
 	Vec3D vUp; vUp.x = 0; vUp.y = 1; vUp.z = 0;
 	Vec3D vTarget; vTarget.x = 0; vTarget.y = 0; vTarget.z = 1;
-	Mat4x4 matCmaeraRota = this->gl3d->glMatrixMakeRotationX(fYaw);
+	Mat4x4 matCmaeraRota = this->gl3d->glMatrixMakeRotationY(fYaw);
 	this->vLookDir = this->gl3d->glMatrixMultiplyVector(matCmaeraRota,vTarget);
 	vTarget = this->gl3d->glVectorAdd(this->vCamera,this->vLookDir);
 
@@ -113,9 +113,17 @@ void Window::update() {
 
 	std::vector<Triangle> vecTriangleToRaster;
 
+	Vec3D myLightAmbient;      myLightAmbient.x = 0.2f; myLightAmbient.y = 0.2f; myLightAmbient.z = 0.2f;
+   	Vec3D myLightDiffuse;      myLightDiffuse.x = 1.0f; myLightDiffuse.y = 1.0f; myLightDiffuse.z = 1.0f;
+   	Vec3D myLightSpecular;     myLightSpecular.x = 1.0f; myLightSpecular.y = 1.0f; myLightSpecular.z = 1.0f;
+	
+   	Vec3D myMaterialAmbient;  myMaterialAmbient.x = 0.0f; myMaterialAmbient.y = 0.0f; myMaterialAmbient.z = 0.0f;
+   	Vec3D myMaterialDiffuse;  myMaterialDiffuse.x = 0.8f; myMaterialDiffuse.y = 0.8f; myMaterialDiffuse.z = 0.8f;
+   	Vec3D myMaterialSpecular; myMaterialSpecular.x = 0.8f; myMaterialSpecular.y = 0.8f; myMaterialSpecular.z = 0.8f;
+
 	for(auto tri : this->meshCube.tris){
 		Triangle triProjected, triTransformed,triViewed;
-		tri.color = 0xFFD700FF;
+		tri.color = 0xFFFFFFFF;
 		triTransformed.p[0] = this->gl3d->glMatrixMultiplyVector(matWorld,tri.p[0]);
 		triTransformed.p[1] = this->gl3d->glMatrixMultiplyVector(matWorld,tri.p[1]);
 		triTransformed.p[2] = this->gl3d->glMatrixMultiplyVector(matWorld,tri.p[2]);
@@ -141,24 +149,15 @@ void Window::update() {
 			// uint32_t color = this->gl3d->glGetLumColor(tri.color,dp);
 			// triTransformed.color = color;
 
-			Vec3D myLightAmbient;      myLightAmbient.x = 0.2f; myLightAmbient.y = 0.2f; myLightAmbient.z = 0.2f;
-   			Vec3D myLightDiffuse;      myLightDiffuse.x = 1.0f; myLightDiffuse.y = 1.0f; myLightDiffuse.z = 1.0f;
-   			Vec3D myLightSpecular;     myLightSpecular.x = 1.0f; myLightSpecular.y = 1.0f; myLightSpecular.z = 1.0f;
-
-   			Vec3D myMaterialAmbient;  myMaterialAmbient.x = 1.0f; myMaterialAmbient.y = 0.5f; myMaterialAmbient.z = 0.0f;
-   			Vec3D myMaterialDiffuse;  myMaterialDiffuse.x = 1.0f; myMaterialDiffuse.y = 0.5f; myMaterialDiffuse.z = 0.0f;
-   			Vec3D myMaterialSpecular; myMaterialSpecular.x = 0.6f; myMaterialSpecular.y = 0.6f; myMaterialSpecular.z = 0.6f;
-
-			Vec3D ambient = this->gl3d->glColor1iTov(tri.color);//this->gl3d->glGetAmbientColor(myMaterialAmbient,myLightAmbient);
+			Vec3D ambient = this->gl3d->glGetAmbientColor(myMaterialAmbient,myLightAmbient);
    			Vec3D diffuse = this->gl3d->glGetDiffuseColor(myMaterialDiffuse,myLightDiffuse,normal,lightDirection);
-   			// Vec3D specular =  this->gl3d->glGetSpecularColor(myMaterialSpecular,myLightSpecular,normal,lightDirection);
-
+   			Vec3D specular =  this->gl3d->glGetSpecularColor(myMaterialSpecular,myLightSpecular,normal,lightDirection,50.0f);
 
 			Vec3D color = this->gl3d->glVectorAdd(ambient,diffuse);
-			Vec3D oc = this->gl3d->glColor1iTov(tri.color);
+			color = this->gl3d->glVectorAdd(color,specular);
+			Vec3D oc = this->gl3d->glColor1iTov(tri.color);  // !!!!!!!
 			color = this->gl3d->glVectorMultiplyVector(oc,color);
-			// color.x *= 255.0f;	color.y *= 255.0f;	color.z *= 255.0f;
-			triTransformed.color = this->gl3d->glColorvTo1i(color);
+			triTransformed.color = this->gl3d->glColorvTo1i(color); // !!!!!!!!!!!
 
 			// convert world space to view space
 			triViewed.p[0] = this->gl3d->glMatrixMultiplyVector(matView,triTransformed.p[0]);
@@ -294,7 +293,7 @@ void Window::display() {
 				pixelMatrix->getPixels()[i][j].getColor()->getR(),
 			 	pixelMatrix->getPixels()[i][j].getColor()->getG(), 
 			 	pixelMatrix->getPixels()[i][j].getColor()->getB(), 255);
-            SDL_RenderDrawPoint(renderer, j, i);
+            SDL_RenderDrawPoint(renderer,this->pixelMatrix->getWidth()-i, this->pixelMatrix->getHeight()-j);
         }
     }
     SDL_RenderPresent(renderer);
@@ -340,16 +339,16 @@ void Window::onKeyPressed(bool(&keys)[size]){
 		exit(0);
 	}
 	if(keys[0xFF & SDLK_LEFT]){
-		this->vCamera.y-=0.5;
-	}
-	if(keys[0xFF & SDLK_RIGHT]){
-		this->vCamera.y+=0.5;
-	}
-	if(keys[0xFF & SDLK_UP]){
 		this->vCamera.x-=0.5;
 	}
-	if(keys[0xFF & SDLK_DOWN]){
+	if(keys[0xFF & SDLK_RIGHT]){
 		this->vCamera.x+=0.5;
+	}
+	if(keys[0xFF & SDLK_UP]){
+		this->vCamera.y-=0.5;
+	}
+	if(keys[0xFF & SDLK_DOWN]){
+		this->vCamera.y+=0.5;
 	}
 	
 	Vec3D vForward = this->gl3d->glVectorMul(this->vLookDir,0.5f);

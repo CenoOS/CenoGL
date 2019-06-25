@@ -18,19 +18,36 @@ namespace CenoGL{
 	}
 
 	uint32_t gl3D::glColor3i(uint32_t r,uint32_t g,uint32_t b){
+		if(r >= 0xFF){
+			r = 0xFF;
+		}
+		if(g >= 0xFF){
+			g = 0xFF;
+		}
+		if(b >= 0xFF){
+			b = 0xFF;
+		}
 		return ((r & 0xFF) << 24) | ((g & 0xFF) << 16) | ((b & 0xFF) << 8) | 0xFF;
+	}
+
+	Vec3D gl3D::glColor3f(float r,float g,float b){
+		Vec3D vec;
+		vec.x =  fmod(r,1.0f);
+		vec.y =  fmod(g,1.0f);
+		vec.z =  fmod(b,1.0f);
+		return vec;
 	}
 
 	Vec3D gl3D::glColor1iTov(uint32_t color){
 		Vec3D col;
-		col.x = (float)((color >> 24) & 0xFF);
-		col.y = (float)((color >> 16) & 0xFF);
-		col.z = (float)((color >> 8) & 0xFF);
+		col.x = ((float)((color >> 24) & 0xFF) / 255.0f);
+		col.y = ((float)((color >> 16) & 0xFF) / 255.0f);
+		col.z = ((float)((color >> 8) & 0xFF) / 255.0f);
 		return col;
 	}
 
 	uint32_t gl3D::glColorvTo1i(Vec3D color){
-		return (((int)color.x << 24) & 0xFF000000) | (((int)color.y << 16) & 0xFF0000) | (((int)color.z << 8) & 0xFF00);
+		return this->glColor3i((uint32_t)(color.x * 255.0f),(uint32_t)(color.y * 255.0f),(uint32_t)(color.z * 255.0f));
 	}
 
 	Vec3D gl3D::glVectorAdd(Vec3D &v1,Vec3D &v2){
@@ -350,16 +367,21 @@ namespace CenoGL{
 
 	Vec3D gl3D::glGetSpecularColor(Vec3D mspec,Vec3D sspec,float lum){
 		Vec3D color = this->glVectorMultiplyVector(mspec,sspec);
-		Vec3D result = this->glVectorMul(color,lum);
-
+		Vec3D result = this->glVectorMul(color,fmax(0.0f,lum));
 		return result;
 	}
 
-	Vec3D gl3D::glGetSpecularColor(Vec3D mspec,Vec3D sspec, Vec3D normal, Vec3D light){
+	// specular=Ks∗lightColor∗(max(dot(N,R)),0)^shininess
+	// R=2∗(N·L)∗N−L
+	Vec3D gl3D::glGetSpecularColor(Vec3D mspec,Vec3D sspec, Vec3D normal, Vec3D light,float shiness){
 		float lum = this->glVectorDotProduct(normal,light);
-		return this->glGetSpecularColor(mspec,sspec,lum);
+		Vec3D R1 = this->glVectorMul(normal,2.0f*lum);
+		Vec3D R = this->glVectorSub(R1,light);
+		lum = this->glVectorDotProduct(normal,R);
+		return this->glGetSpecularColor(mspec,sspec,powf(lum,shiness));
 	}
 
+	// diffuse=Kd∗lightColor∗max(dot(N,L),0)
 	Vec3D gl3D::glGetDiffuseColor(Vec3D mdiff,Vec3D sdiff, Vec3D normal, Vec3D light){
 		float cos = this->glVectorDotProduct(normal,light);
 		Vec3D color = this->glVectorMultiplyVector(mdiff,sdiff);
@@ -368,6 +390,7 @@ namespace CenoGL{
 		return result;
 	}
 	
+	// ambient=Ka∗globalAmbient
 	Vec3D gl3D::glGetAmbientColor(Vec3D mamb,Vec3D gamb){
 		Vec3D color = this->glVectorMultiplyVector(mamb,gamb);
 		return color;

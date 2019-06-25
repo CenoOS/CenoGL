@@ -1,3 +1,5 @@
 .idea/
 .vscode/
 cmake-build-debug
+bunny.obj
+bunny.mtl

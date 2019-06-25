@@ -49,6 +49,7 @@ namespace CenoGL
 				if(line[0]=='f'){
 					int f[3];
 					s >> junk >> f[0] >> f[1] >> f[2];
+
 					tris.push_back({verts[f[0]-1] , verts[f[1]-1] , verts[f[2]-1]});
 				}
 			}
@@ -66,7 +67,7 @@ namespace CenoGL
 		public:
 			gl3D(PixelMatrix* pixels_buf);	
 
-			Vec3D glGetSpecularColor(Vec3D mspec,Vec3D sspec, Vec3D normal, Vec3D light);
+			Vec3D glGetSpecularColor(Vec3D mspec,Vec3D sspec, Vec3D normal, Vec3D light,float shiness);
 			Vec3D glGetSpecularColor(Vec3D mspec,Vec3D sspec,float lum);
 			Vec3D glGetDiffuseColor(Vec3D mdiff,Vec3D sdiff, Vec3D normal, Vec3D light);
 			Vec3D glGetAmbientColor(Vec3D mamb,Vec3D gamb);
@@ -76,6 +77,7 @@ namespace CenoGL
 			Vec3D glVertex3f(float x,float y,float z);
 
 			uint32_t glColor3i(uint32_t r,uint32_t g,uint32_t b);
+			Vec3D glColor3f(float r,float g,float b);
 			Vec3D glColor1iTov(uint32_t color);
 			uint32_t glColorvTo1i(Vec3D color);
 
