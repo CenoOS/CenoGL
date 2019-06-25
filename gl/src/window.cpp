@@ -155,9 +155,9 @@ void Window::update() {
 
 			Vec3D color = this->gl3d->glVectorAdd(ambient,diffuse);
 			color = this->gl3d->glVectorAdd(color,specular);
-			Vec3D oc = this->gl3d->glColor1iTov(tri.color);  // !!!!!!!
+			Vec3D oc = this->gl3d->glColor1iTov(tri.color);
 			color = this->gl3d->glVectorMultiplyVector(oc,color);
-			triTransformed.color = this->gl3d->glColorvTo1i(color); // !!!!!!!!!!!
+			triTransformed.color = this->gl3d->glColorvTo1i(color);
 
 			// convert world space to view space
 			triViewed.p[0] = this->gl3d->glMatrixMultiplyVector(matView,triTransformed.p[0]);
