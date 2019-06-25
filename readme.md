@@ -8,5 +8,7 @@ make run
 ![demo1](https://raw.githubusercontent.com/CenoOS/CenoGL/master/img/demo1.jpg)
 
 ## 光照
-![demo1](https://raw.githubusercontent.com/CenoOS/CenoGL/master/img/demo2.jpg)![demo1](https://raw.githubusercontent.com/CenoOS/CenoGL/master/img/demo3.jpg)
+![demo1](https://raw.githubusercontent.com/CenoOS/CenoGL/master/img/demo2.jpg)
 
+## 光照
+![demo1](https://raw.githubusercontent.com/CenoOS/CenoGL/master/img/demo3.jpg)
