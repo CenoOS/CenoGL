@@ -93,7 +93,7 @@ void Window::update() {
 	matRotZ = this->gl3d->glMatrixMakeRotationZ(fTheta);
 	matRotX = this->gl3d->glMatrixMakeRotationX(fTheta);
 
-	Mat4x4 matTrans = this->gl3d->glMatrixMakeTranslation(0.0f,0.0f,10.0f);
+	Mat4x4 matTrans = this->gl3d->glMatrixMakeTranslation(0.0f,0.0f,2.0f);
 
 	Mat4x4 matWorld;
 	matWorld = this->gl3d->glMatrixMakeIdentity();

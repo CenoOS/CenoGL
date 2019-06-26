@@ -49,7 +49,7 @@ all:	CenoGL.o pixel.o pixel_matrix_buf.o   graphics_base_hal.o glm.o gl2d.o gl3d
 	$(OBJS_DIR)/glut.o \
 	$(OBJS_DIR)/graphics_base_hal.o \
 	$(OBJS_DIR)/window.o \
-	$(LIB) -mhvx -mavx
+	$(LIB) -mhvx -march=native
 
 CenoGL.o:
 	$(CXX) $(CPP_FLAGS) -o $(OBJS_DIR)/CenoGL.o -c $(BASE_DIR)/app/src/CenoGL.cpp $(LIB)
