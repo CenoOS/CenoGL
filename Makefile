@@ -25,6 +25,9 @@ CXX=g++
 CPP_FLAGS=-I$(INCLUDE_DIR) -std=c++11 -Wall
 LINK_FLAGS=
 
+PARALLEL_MODE=NO_PARALLEL
+PARALLEL_MODE_FLAG=-D$(PARALLEL_MODE)
+
 # extera lib
 LIB=-lstdc++ -ljpeg -lSDL2 -lSDL2main `sdl2-config --cflags --libs` -lpthread
 
@@ -52,7 +55,7 @@ pixel.o:
 pixel_matrix_buf.o:
 	$(CXX) $(CPP_FLAGS) -o $(OBJS_DIR)/pixel_matrix_buf.o -c $(BASE_DIR)/gl/src/pixel_matrix_buf.cpp $(LIB)
 glm.o:
-	$(CXX) $(CPP_FLAGS) -o $(OBJS_DIR)/glm.o -c $(BASE_DIR)/glm/src/glm.cpp $(LIB)
+	$(CXX) $(CPP_FLAGS) -o $(OBJS_DIR)/glm.o -c $(BASE_DIR)/glm/src/glm.cpp $(LIB) $(PARALLEL_MODE_FLAG)
 gl2d.o:
 	$(CXX) $(CPP_FLAGS) -o $(OBJS_DIR)/gl2d.o -c $(BASE_DIR)/gl/src/gl2d.cpp $(LIB)
 gl3d.o:

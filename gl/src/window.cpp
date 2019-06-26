@@ -4,7 +4,6 @@
 #include <list>
 #include <algorithm>
 
-
 using namespace CenoGL;
 
 Window::Window() {
