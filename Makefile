@@ -22,7 +22,7 @@ ASM_DIR=$(BASE_DIR)/app/asm
 CXX=g++
 
 # build flags
-CPP_FLAGS=-I$(INCLUDE_DIR) -std=c++11 -Wall 
+CPP_FLAGS=-I$(INCLUDE_DIR) -std=c++11 -Wall -O3
 LINK_FLAGS=
 
 # NO_PARALLEL:
