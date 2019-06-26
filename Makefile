@@ -22,10 +22,14 @@ ASM_DIR=$(BASE_DIR)/app/asm
 CXX=g++
 
 # build flags
-CPP_FLAGS=-I$(INCLUDE_DIR) -std=c++11 -Wall
+CPP_FLAGS=-I$(INCLUDE_DIR) -std=c++11 -Wall 
 LINK_FLAGS=
 
-PARALLEL_MODE=NO_PARALLEL
+# NO_PARALLEL:
+# PARALLEL_SIMD:
+# PARALLEL_CUDA:
+# PARALLEL_OPENCL:
+PARALLEL_MODE=PARALLEL_SIMD
 PARALLEL_MODE_FLAG=-D$(PARALLEL_MODE)
 
 # extera lib
@@ -45,7 +49,7 @@ all:	CenoGL.o pixel.o pixel_matrix_buf.o   graphics_base_hal.o glm.o gl2d.o gl3d
 	$(OBJS_DIR)/glut.o \
 	$(OBJS_DIR)/graphics_base_hal.o \
 	$(OBJS_DIR)/window.o \
-	$(LIB)
+	$(LIB) -mhvx -mavx
 
 CenoGL.o:
 	$(CXX) $(CPP_FLAGS) -o $(OBJS_DIR)/CenoGL.o -c $(BASE_DIR)/app/src/CenoGL.cpp $(LIB)
