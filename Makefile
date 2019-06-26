@@ -51,6 +51,18 @@ all:	CenoGL.o pixel.o pixel_matrix_buf.o   graphics_base_hal.o glm.o gl2d.o gl3d
 	$(OBJS_DIR)/window.o \
 	$(LIB) -mhvx -march=native
 
+	$(CXX) -o $(BUILD_DIR)/CenoGL \
+	$(OBJS_DIR)/CenoGL.o \
+	$(OBJS_DIR)/pixel.o \
+	$(OBJS_DIR)/pixel_matrix_buf.o \
+	$(OBJS_DIR)/glm.o \
+	$(OBJS_DIR)/gl2d.o \
+	$(OBJS_DIR)/gl3d.o \
+	$(OBJS_DIR)/glut.o \
+	$(OBJS_DIR)/graphics_base_hal.o \
+	$(OBJS_DIR)/window.o \
+	$(LIB) -mhvx -march=native
+
 CenoGL.o:
 	$(CXX) $(CPP_FLAGS) -o $(OBJS_DIR)/CenoGL.o -c $(BASE_DIR)/app/src/CenoGL.cpp $(LIB)
 
@@ -60,6 +72,7 @@ pixel_matrix_buf.o:
 	$(CXX) $(CPP_FLAGS) -o $(OBJS_DIR)/pixel_matrix_buf.o -c $(BASE_DIR)/gl/src/pixel_matrix_buf.cpp $(LIB)
 glm.o:
 	$(CXX) $(CPP_FLAGS) -o $(OBJS_DIR)/glm.o -c $(BASE_DIR)/glm/src/glm.cpp $(LIB) $(PARALLEL_MODE_FLAG)
+	$(CXX) -o $(BASE_DIR)/app/asm/glm.S -S $(BASE_DIR)/glm/src/glm.cpp -O3
 gl2d.o:
 	$(CXX) $(CPP_FLAGS) -o $(OBJS_DIR)/gl2d.o -c $(BASE_DIR)/gl/src/gl2d.cpp $(LIB)
 gl3d.o:
