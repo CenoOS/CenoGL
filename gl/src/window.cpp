@@ -1,5 +1,6 @@
 #include "../include/window.h"
 #include "../include/log.h"
+#include "../../glm/include/glm.h"
 #include <list>
 #include <algorithm>
 
@@ -97,19 +98,19 @@ void Window::update() {
 
 	Mat4x4 matWorld;
 	matWorld = this->gl3d->glMatrixMakeIdentity();
-	matWorld = this->gl3d->glMatrixMultiplyMatrix(matRotZ,matRotX);
-	matWorld = this->gl3d->glMatrixMultiplyMatrix(matWorld,matTrans);
+	matWorld = glmMatrixMultiplyMatrix(matRotZ,matRotX);
+	matWorld = glmMatrixMultiplyMatrix(matWorld,matTrans);
 
 	Vec3D vUp; vUp.x = 0; vUp.y = 1; vUp.z = 0;
 	Vec3D vTarget; vTarget.x = 0; vTarget.y = 0; vTarget.z = 1;
 	Mat4x4 matCmaeraRota = this->gl3d->glMatrixMakeRotationY(fYaw);
-	this->vLookDir = this->gl3d->glMatrixMultiplyVector(matCmaeraRota,vTarget);
-	vTarget = this->gl3d->glVectorAdd(this->vCamera,this->vLookDir);
+	this->vLookDir = glmMatrixMultiplyVector(matCmaeraRota,vTarget);
+	vTarget = glmVectorAdd(this->vCamera,this->vLookDir);
 
 	Mat4x4 matCamera = this->gl3d->glMatrixPointAt(this->vCamera,vTarget,vUp);
 
 	// camera view matrix
-	Mat4x4 matView = this->gl3d->glMatrixQuickInverse(matCamera);
+	Mat4x4 matView = glmMatrixQuickInverse(matCamera);
 
 	std::vector<Triangle> vecTriangleToRaster;
 
@@ -124,26 +125,26 @@ void Window::update() {
 	for(auto tri : this->meshCube.tris){
 		Triangle triProjected, triTransformed,triViewed;
 		tri.color = 0xFFFFFFFF;
-		triTransformed.p[0] = this->gl3d->glMatrixMultiplyVector(matWorld,tri.p[0]);
-		triTransformed.p[1] = this->gl3d->glMatrixMultiplyVector(matWorld,tri.p[1]);
-		triTransformed.p[2] = this->gl3d->glMatrixMultiplyVector(matWorld,tri.p[2]);
+		triTransformed.p[0] = glmMatrixMultiplyVector(matWorld,tri.p[0]);
+		triTransformed.p[1] = glmMatrixMultiplyVector(matWorld,tri.p[1]);
+		triTransformed.p[2] = glmMatrixMultiplyVector(matWorld,tri.p[2]);
 
 		Vec3D normal,line1,line2;
-		line1 = this->gl3d->glVectorSub(triTransformed.p[1],triTransformed.p[0]);
-		line2 = this->gl3d->glVectorSub(triTransformed.p[2],triTransformed.p[0]);
-		normal = this->gl3d->glVectorCrossProduct(line1,line2);
-		normal = this->gl3d->glVectorNormalise(normal);
+		line1 = glmVectorSub(triTransformed.p[1],triTransformed.p[0]);
+		line2 = glmVectorSub(triTransformed.p[2],triTransformed.p[0]);
+		normal = glmVectorCrossProduct(line1,line2);
+		normal = glmVectorNormalise(normal);
 
-		Vec3D cameraRay = this->gl3d->glVectorSub(triTransformed.p[0],this->vCamera);
+		Vec3D cameraRay = glmVectorSub(triTransformed.p[0],this->vCamera);
 
-		if(this->gl3d->glVectorDotProduct(normal,cameraRay) < 0.0f){
+		if(glmVectorDotProduct(normal,cameraRay) < 0.0f){
 			
 			//Illumination
 			Vec3D lightDirection;
 			lightDirection.x = 0.0f;
 			lightDirection.y = 0.0f;
 			lightDirection.z =-1.0f;
-			lightDirection = this->gl3d->glVectorNormalise(lightDirection);
+			lightDirection = glmVectorNormalise(lightDirection);
 
 			// float dp = fmax(0.1f,this->gl3d->glVectorDotProduct(lightDirection,normal));
 			// uint32_t color = this->gl3d->glGetLumColor(tri.color,dp);
@@ -153,16 +154,16 @@ void Window::update() {
    			Vec3D diffuse = this->gl3d->glGetDiffuseColor(myMaterialDiffuse,myLightDiffuse,normal,lightDirection);
    			Vec3D specular =  this->gl3d->glGetSpecularColor(myMaterialSpecular,myLightSpecular,normal,lightDirection,90.0f);
 
-			Vec3D color = this->gl3d->glVectorAdd(ambient,diffuse);
-			color = this->gl3d->glVectorAdd(color,specular);
+			Vec3D color = glmVectorAdd(ambient,diffuse);
+			color = glmVectorAdd(color,specular);
 			Vec3D oc = this->gl3d->glColor1iTov(tri.color);
-			color = this->gl3d->glVectorMultiplyVector(oc,color);
+			color = glmVectorMul(oc,color);
 			triTransformed.color = this->gl3d->glColorvTo1i(color);
 
 			// convert world space to view space
-			triViewed.p[0] = this->gl3d->glMatrixMultiplyVector(matView,triTransformed.p[0]);
-			triViewed.p[1] = this->gl3d->glMatrixMultiplyVector(matView,triTransformed.p[1]);
-			triViewed.p[2] = this->gl3d->glMatrixMultiplyVector(matView,triTransformed.p[2]);
+			triViewed.p[0] = glmMatrixMultiplyVector(matView,triTransformed.p[0]);
+			triViewed.p[1] = glmMatrixMultiplyVector(matView,triTransformed.p[1]);
+			triViewed.p[2] = glmMatrixMultiplyVector(matView,triTransformed.p[2]);
 
 			//clip viewed triangles against near plane
 			int nClippedTriangles = 0;
@@ -173,24 +174,24 @@ void Window::update() {
 
 			for(int i = 0; i<nClippedTriangles; i++){
 				// Project triangles from 3D --> 2D
-				triProjected.p[0] = this->gl3d->glMatrixMultiplyVector(this->matProjection,clipped[i].p[0]);
-				triProjected.p[1] = this->gl3d->glMatrixMultiplyVector(this->matProjection,clipped[i].p[1]);
-				triProjected.p[2] = this->gl3d->glMatrixMultiplyVector(this->matProjection,clipped[i].p[2]);
+				triProjected.p[0] = glmMatrixMultiplyVector(this->matProjection,clipped[i].p[0]);
+				triProjected.p[1] = glmMatrixMultiplyVector(this->matProjection,clipped[i].p[1]);
+				triProjected.p[2] = glmMatrixMultiplyVector(this->matProjection,clipped[i].p[2]);
 				triProjected.color = triTransformed.color;
 
 				// scale into view 
-				triProjected.p[0] = this->gl3d->glVectorDiv(triProjected.p[0],triProjected.p[0].w);
-				triProjected.p[1] = this->gl3d->glVectorDiv(triProjected.p[1],triProjected.p[1].w);
-				triProjected.p[2] = this->gl3d->glVectorDiv(triProjected.p[2],triProjected.p[2].w);
+				triProjected.p[0] = glmVectorDiv(triProjected.p[0],triProjected.p[0].w);
+				triProjected.p[1] = glmVectorDiv(triProjected.p[1],triProjected.p[1].w);
+				triProjected.p[2] = glmVectorDiv(triProjected.p[2],triProjected.p[2].w);
 
 				// Scale into view
 				Vec3D offsetView;
 				offsetView.x = 1.0f;
 				offsetView.y = 1.0f;
 				offsetView.z = 0.0f;
-				triProjected.p[0] = this->gl3d->glVectorAdd(triProjected.p[0],offsetView);
-				triProjected.p[1] = this->gl3d->glVectorAdd(triProjected.p[1],offsetView);
-				triProjected.p[2] = this->gl3d->glVectorAdd(triProjected.p[2],offsetView);
+				triProjected.p[0] = glmVectorAdd(triProjected.p[0],offsetView);
+				triProjected.p[1] = glmVectorAdd(triProjected.p[1],offsetView);
+				triProjected.p[2] = glmVectorAdd(triProjected.p[2],offsetView);
 
 				triProjected.p[0].x *= 0.4f * (float)this->windowWidth;
 				triProjected.p[0].y *= 0.4f * (float)this->windowHeight;
@@ -351,12 +352,12 @@ void Window::onKeyPressed(bool(&keys)[size]){
 		this->vCamera.y+=0.5;
 	}
 	
-	Vec3D vForward = this->gl3d->glVectorMul(this->vLookDir,0.5f);
+	Vec3D vForward = glmVectorMul(this->vLookDir,0.5f);
 	if(keys[SDLK_w]){
-		this->vCamera = this->gl3d->glVectorAdd(this->vCamera,vForward);
+		this->vCamera = glmVectorAdd(this->vCamera,vForward);
 	}
 	if(keys[SDLK_s]){
-		this->vCamera = this->gl3d->glVectorSub(this->vCamera,vForward);
+		this->vCamera = glmVectorSub(this->vCamera,vForward);
 	}
 	if(keys[SDLK_a]){
 		this->fYaw-=0.1f;

@@ -4,6 +4,7 @@ BASE_DIR=/Users/neroyang/project/Ceno-GL
 # include
 INCLUDE_DIR=$(BASE_DIR)/gl/include/
 INCLUDE_DIR+=$(BASE_DIR)/app/include/
+INCLUDE_DIR+=$(BASE_DIR)/glm/include/
 
 # app
 SRC=$(wildcard $(BASE_DIR)/app/src/*.cpp)
@@ -30,11 +31,12 @@ LIB=-lstdc++ -ljpeg -lSDL2 -lSDL2main `sdl2-config --cflags --libs` -lpthread
 run:	clean	all
 	$(BUILD_DIR)/CenoGL
  
-all:	CenoGL.o pixel.o pixel_matrix_buf.o   graphics_base_hal.o gl2d.o gl3d.o glut.o window.o
+all:	CenoGL.o pixel.o pixel_matrix_buf.o   graphics_base_hal.o glm.o gl2d.o gl3d.o glut.o window.o
 	$(CXX) -o $(BUILD_DIR)/CenoGL \
 	$(OBJS_DIR)/CenoGL.o \
 	$(OBJS_DIR)/pixel.o \
 	$(OBJS_DIR)/pixel_matrix_buf.o \
+	$(OBJS_DIR)/glm.o \
 	$(OBJS_DIR)/gl2d.o \
 	$(OBJS_DIR)/gl3d.o \
 	$(OBJS_DIR)/glut.o \
@@ -49,6 +51,8 @@ pixel.o:
 	$(CXX) $(CPP_FLAGS) -o $(OBJS_DIR)/pixel.o -c $(BASE_DIR)/gl/src/pixel.cpp $(LIB)
 pixel_matrix_buf.o:
 	$(CXX) $(CPP_FLAGS) -o $(OBJS_DIR)/pixel_matrix_buf.o -c $(BASE_DIR)/gl/src/pixel_matrix_buf.cpp $(LIB)
+glm.o:
+	$(CXX) $(CPP_FLAGS) -o $(OBJS_DIR)/glm.o -c $(BASE_DIR)/glm/src/glm.cpp $(LIB)
 gl2d.o:
 	$(CXX) $(CPP_FLAGS) -o $(OBJS_DIR)/gl2d.o -c $(BASE_DIR)/gl/src/gl2d.cpp $(LIB)
 gl3d.o:

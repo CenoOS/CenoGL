@@ -50,89 +50,6 @@ namespace CenoGL{
 		return this->glColor3i((uint32_t)(color.x * 255.0f),(uint32_t)(color.y * 255.0f),(uint32_t)(color.z * 255.0f));
 	}
 
-	Vec3D gl3D::glVectorAdd(Vec3D &v1,Vec3D &v2){
-		Vec3D vec;
-		vec.x =  v1.x + v2.x;
-		vec.y =  v1.y + v2.y;
-		vec.z =  v1.z + v2.z;
-		return vec;
-	}
-
-	Vec3D gl3D::glVectorSub(Vec3D &v1,Vec3D &v2){
-		Vec3D vec;
-		vec.x =  v1.x-v2.x;
-		vec.y =  v1.y-v2.y;
-		vec.z =  v1.z-v2.z;
-		return vec;
-	}
-
-	Vec3D gl3D::glVectorMul(Vec3D &v1,float k){
-		Vec3D vec;
-		vec.x =  v1.x*k;
-		vec.y =  v1.y*k;
-		vec.z =  v1.z*k;
-		return vec;
-	}
-
-	Vec3D gl3D::glVectorDiv(Vec3D &v1,float k){
-		Vec3D vec;
-		vec.x =  v1.x/k;
-		vec.y =  v1.y/k;
-		vec.z =  v1.z/k;
-		return vec;
-	}
-
-	float gl3D::glVectorDotProduct(Vec3D &v1,Vec3D &v2){
-		return v1.x*v2.x + v1.y*v2.y+v1.z*v2.z;
-	}
-
-	float gl3D::glVectorLength(Vec3D &v){
-		return sqrtf(this->glVectorDotProduct(v,v));
-	}
-
-	Vec3D gl3D::glVectorNormalise(Vec3D &v1){
-		float l = glVectorLength(v1);
-		Vec3D vec;
-		vec.x =  v1.x/l;
-		vec.y =  v1.y/l;
-		vec.z =  v1.z/l;
-		return vec;
-	}
-
-	Vec3D gl3D::glVectorCrossProduct(Vec3D &v1,Vec3D &v2){
-		Vec3D v;
-		v.x = v1.y * v2.z - v1.z * v2.y;
-		v.y = v1.z * v2.x - v1.x * v2.z;
-		v.z = v1.x * v2.y - v1.y * v2.x;
-		return v;
-	}
-
-	Vec3D gl3D::glVectorMultiplyVector(Vec3D &v1,Vec3D &v2){
-		Vec3D vec;
-		vec.x =  v1.x*v2.x;
-		vec.y =  v1.y*v2.y;
-		vec.z =  v1.z*v2.z;
-		return vec;
-	}
-
-	Vec3D gl3D::glMatrixMultiplyVector(Mat4x4 &m, Vec3D &i){
-		Vec3D v;
-		v.x = i.x * m.m[0][0] + i.y * m.m[1][0] + i.z * m.m[2][0] + i.w * m.m[3][0];
-		v.y = i.x * m.m[0][1] + i.y * m.m[1][1] + i.z * m.m[2][1] + i.w * m.m[3][1];
-		v.z = i.x * m.m[0][2] + i.y * m.m[1][2] + i.z * m.m[2][2] + i.w * m.m[3][2];
-		v.w = i.x * m.m[0][3] + i.y * m.m[1][3] + i.z * m.m[2][3] + i.w * m.m[3][3];
-		return v;
-	}
-
-	Mat4x4 gl3D::glMatrixMultiplyMatrix(Mat4x4 &m1, Mat4x4 &m2){
-		Mat4x4 matrix;
-		for(int c = 0; c < 4; c++){
-			for(int r = 0; r < 4; r++){
-				matrix.m[r][c] = m1.m[r][0] * m2.m[0][c] + m1.m[r][1] * m2.m[1][c] + m1.m[r][2] * m2.m[2][c] + m1.m[r][3] * m2.m[3][c];
-			}
-		}
-		return matrix;
-	}
 
 	Mat4x4 gl3D::glMatrixMakeIdentity(){
 		Mat4x4 mat;
@@ -202,16 +119,16 @@ namespace CenoGL{
 
 	Mat4x4 gl3D::glMatrixPointAt(Vec3D &pos,Vec3D &target,Vec3D &up){
 		// caculate new forward direction
-		Vec3D newForward = this->glVectorSub(target,pos);
-		newForward = this->glVectorNormalise(newForward);
+		Vec3D newForward = glmVectorSub(target,pos);
+		newForward = glmVectorNormalise(newForward);
 
 		// caculate new up direction
-		Vec3D a = this->glVectorMul(newForward,this->glVectorDotProduct(up,newForward));
-		Vec3D newUp = this->glVectorSub(up,a);
-		newUp = this->glVectorNormalise(newUp);
+		Vec3D a = glmVectorMul(newForward,glmVectorDotProduct(up,newForward));
+		Vec3D newUp = glmVectorSub(up,a);
+		newUp = glmVectorNormalise(newUp);
 
 		// New Right direction is easy, its just cross product
-		Vec3D newRight = this->glVectorCrossProduct(newUp, newForward);
+		Vec3D newRight = glmVectorCrossProduct(newUp, newForward);
 
 		// Construct Dimensioning and Translation Matrix	
 		Mat4x4 matrix;
@@ -222,41 +139,28 @@ namespace CenoGL{
 		return matrix;
 	}
 
-	Mat4x4 gl3D::glMatrixQuickInverse(Mat4x4 &m){
-		Mat4x4 matrix;
-		matrix.m[0][0] = m.m[0][0]; matrix.m[0][1] = m.m[1][0]; matrix.m[0][2] = m.m[2][0]; matrix.m[0][3] = 0.0f;
-		matrix.m[1][0] = m.m[0][1]; matrix.m[1][1] = m.m[1][1]; matrix.m[1][2] = m.m[2][1]; matrix.m[1][3] = 0.0f;
-		matrix.m[2][0] = m.m[0][2]; matrix.m[2][1] = m.m[1][2]; matrix.m[2][2] = m.m[2][2]; matrix.m[2][3] = 0.0f;
-		matrix.m[3][0] = -(m.m[3][0] * matrix.m[0][0] + m.m[3][1] * matrix.m[1][0] + m.m[3][2] * matrix.m[2][0]);
-		matrix.m[3][1] = -(m.m[3][0] * matrix.m[0][1] + m.m[3][1] * matrix.m[1][1] + m.m[3][2] * matrix.m[2][1]);
-		matrix.m[3][2] = -(m.m[3][0] * matrix.m[0][2] + m.m[3][1] * matrix.m[1][2] + m.m[3][2] * matrix.m[2][2]);
-		matrix.m[3][3] = 1.0f;
-		return matrix;
-	}
-
-
 	Vec3D gl3D::glVectorIntersectPlane(Vec3D &plane_p, Vec3D &plane_n, Vec3D &lineStart, Vec3D &lineEnd)
 	{
-		plane_n = this->glVectorNormalise(plane_n);
-		float plane_d = -this->glVectorDotProduct(plane_n, plane_p);
-		float ad = this->glVectorDotProduct(lineStart, plane_n);
-		float bd = this->glVectorDotProduct(lineEnd, plane_n);
+		plane_n = glmVectorNormalise(plane_n);
+		float plane_d = -glmVectorDotProduct(plane_n, plane_p);
+		float ad = glmVectorDotProduct(lineStart, plane_n);
+		float bd = glmVectorDotProduct(lineEnd, plane_n);
 		float t = (-plane_d - ad) / (bd - ad);
-		Vec3D lineStartToEnd = this->glVectorSub(lineEnd, lineStart);
-		Vec3D lineToIntersect = this->glVectorMul(lineStartToEnd, t);
-		return this->glVectorAdd(lineStart, lineToIntersect);
+		Vec3D lineStartToEnd = glmVectorSub(lineEnd, lineStart);
+		Vec3D lineToIntersect = glmVectorMul(lineStartToEnd, t);
+		return glmVectorAdd(lineStart, lineToIntersect);
 	}
 
 	int gl3D::glTriangleClipAgainstPlane(Vec3D plane_p, Vec3D plane_n, Triangle &in_tri, Triangle &out_tri1, Triangle &out_tri2)
 	{
 		// Make sure plane normal is indeed normal
-		plane_n = this->glVectorNormalise(plane_n);
+		plane_n = glmVectorNormalise(plane_n);
 
 		// Return signed shortest distance from point to plane, plane normal must be normalised
 		auto dist = [&](Vec3D &p)
 		{
-			Vec3D n = this->glVectorNormalise(p);
-			return (plane_n.x * p.x + plane_n.y * p.y + plane_n.z * p.z - this->glVectorDotProduct(plane_n, plane_p));
+			Vec3D n = glmVectorNormalise(p);
+			return (plane_n.x * p.x + plane_n.y * p.y + plane_n.z * p.z - glmVectorDotProduct(plane_n, plane_p));
 		};
 
 		// Create two temporary storage arrays to classify points either side of plane
@@ -366,33 +270,33 @@ namespace CenoGL{
 
 
 	Vec3D gl3D::glGetSpecularColor(Vec3D mspec,Vec3D sspec,float lum){
-		Vec3D color = this->glVectorMultiplyVector(mspec,sspec);
-		Vec3D result = this->glVectorMul(color,fmax(0.0f,lum));
+		Vec3D color = glmVectorMul(mspec,sspec);
+		Vec3D result = glmVectorMul(color,fmax(0.0f,lum));
 		return result;
 	}
 
 	// specular=Ks∗lightColor∗(max(dot(N,R)),0)^shininess
 	// R=2∗(N·L)∗N−L
 	Vec3D gl3D::glGetSpecularColor(Vec3D mspec,Vec3D sspec, Vec3D normal, Vec3D light,float shiness){
-		float lum = this->glVectorDotProduct(normal,light);
-		Vec3D R1 = this->glVectorMul(normal,2.0f*lum);
-		Vec3D R = this->glVectorSub(R1,light);
-		lum = this->glVectorDotProduct(normal,R);
+		float lum = glmVectorDotProduct(normal,light);
+		Vec3D R1 = glmVectorMul(normal,2.0f*lum);
+		Vec3D R = glmVectorSub(R1,light);
+		lum = glmVectorDotProduct(normal,R);
 		return this->glGetSpecularColor(mspec,sspec,powf(lum,shiness));
 	}
 
 	// diffuse=Kd∗lightColor∗max(dot(N,L),0)
 	Vec3D gl3D::glGetDiffuseColor(Vec3D mdiff,Vec3D sdiff, Vec3D normal, Vec3D light){
-		float cos = this->glVectorDotProduct(normal,light);
-		Vec3D color = this->glVectorMultiplyVector(mdiff,sdiff);
-		Vec3D result = this->glVectorMul(color,fmax(0.0f,cos));
+		float cos = glmVectorDotProduct(normal,light);
+		Vec3D color = glmVectorMul(mdiff,sdiff);
+		Vec3D result = glmVectorMul(color,fmax(0.0f,cos));
 
 		return result;
 	}
 	
 	// ambient=Ka∗globalAmbient
 	Vec3D gl3D::glGetAmbientColor(Vec3D mamb,Vec3D gamb){
-		Vec3D color = this->glVectorMultiplyVector(mamb,gamb);
+		Vec3D color = glmVectorMul(mamb,gamb);
 		return color;
 	}
 

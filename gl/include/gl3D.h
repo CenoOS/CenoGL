@@ -5,6 +5,7 @@
 #include <fstream>
 #include <sstream>
 #include "../include/graphics_base_hal.h"
+#include "../../glm/include/glm.h"
 
 #define GL_CONSTANT_ATTENUATION    1.0f
 #define GL_LINEAR_ATTENUATION 		0
@@ -12,14 +13,6 @@
 
 namespace CenoGL
 {
-
-
-	struct Vec3D{
-		float x = 0;
-		float y = 0;
-		float z = 0;
-		float w = 1;
-	};
 
 	struct Triangle{
 		Vec3D p[3];
@@ -56,10 +49,6 @@ namespace CenoGL
 		}
 	};
 
-	struct Mat4x4{
-		float m[4][4] = {0};
-	};
-
 	class gl3D{
 		private:
 			GraphicsBaseHAL *mGraphicsBaseHAL;
@@ -81,18 +70,7 @@ namespace CenoGL
 			Vec3D glColor1iTov(uint32_t color);
 			uint32_t glColorvTo1i(Vec3D color);
 
-			Vec3D glVectorAdd(Vec3D &v1,Vec3D &v2); 
-			Vec3D glVectorSub(Vec3D &v1,Vec3D &v2); 
-			Vec3D glVectorMul(Vec3D &v1,float k); 
-			Vec3D glVectorDiv(Vec3D &v1,float k); 
-			float glVectorDotProduct(Vec3D &v1,Vec3D &v2); 
-			float glVectorLength(Vec3D &v);
-			Vec3D glVectorNormalise(Vec3D &v1); 
-			Vec3D glVectorCrossProduct(Vec3D &v1,Vec3D &v2); 
-			Vec3D glVectorMultiplyVector(Vec3D &v1,Vec3D &v2); 
-
-			Vec3D  glMatrixMultiplyVector(Mat4x4 &m, Vec3D &i);
-			Mat4x4 glMatrixMultiplyMatrix(Mat4x4 &m1, Mat4x4 &m2);
+		
 			Mat4x4 glMatrixMakeIdentity();
 			Mat4x4 glMatrixMakeRotationX(float angle);
 			Mat4x4 glMatrixMakeRotationY(float angle);
@@ -101,7 +79,6 @@ namespace CenoGL
 			Mat4x4 glMatrixMakeProjection(float fovDegree, float aspectRatio, float near, float far);
 
 			Mat4x4 glMatrixPointAt(Vec3D &pos,Vec3D &target,Vec3D &up);
-			Mat4x4 glMatrixQuickInverse(Mat4x4 &m);
 
 			Vec3D glVectorIntersectPlane(Vec3D &plane_p, Vec3D &plane_n, Vec3D &lineStart, Vec3D &lineEnd);
 			int   glTriangleClipAgainstPlane(Vec3D plane_p, Vec3D plane_n, Triangle &in_tri, Triangle &out_tri1, Triangle &out_tri2);
