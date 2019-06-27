@@ -4,3 +4,8 @@ cmake-build-debug
 bunny.obj
 bunny.mtl
 axis.obj
+teapot.obj
+cow-nonormals.obj
+app/asm/
+app/build/
+app/obj/
