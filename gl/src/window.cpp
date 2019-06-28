@@ -81,11 +81,6 @@ void Window::initPixelMatrixBuffer(){
 
 float fTheta = 0.0f;
 void Window::update() {
-	// this->gl2d->drawLine(0,0,200,200,0xFF000000);
-	// this->gl2d->drawCircle(100,100,20,0x00FF0000);
-	// this->gl2d->drawTriangle(10,10,100,10,10,100,0xFFFFFF00);
-	// this->gl2d->fillTriangle(120,120,210,120,120,210,0xFF00FF00);
-	// this->gl2d->fillCircle(210,210,20,0xFFFF0000);
 
 	// Rotation Z and X
 	Mat4x4 matRotZ, matRotX;

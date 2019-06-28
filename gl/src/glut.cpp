@@ -1,6 +1,7 @@
 #include "../include/glut.h"
 #include "../include/Log.h"
 
+
 namespace CenoGL{
 
 	glut::glut(){
@@ -117,6 +118,8 @@ namespace CenoGL{
 			}
 		}
 		SDL_RenderPresent(renderer);
+
+		
 		this->clear();
 	}
 
