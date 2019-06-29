@@ -19,15 +19,21 @@ namespace CenoGL
 		private:
 			std::vector<Vec3D> vertexs;
 			Vec3D currentColor;
+			GLDrawMode drawMode;
 		public:
 			gl();
 
-			void glVertex3f();
+			void glVertex3f(float x, float y, float z);
+			void glColor3f(float r, float g, float b);
 
+			// just tell the draw mode
 			void glBegin(GLDrawMode mode);
-			void glEnd();
-			void glFlush();
 			
+			// draw to buffer 
+			void glEnd();
+
+			// i dont know what the the fuck does this func do? may be tell sdl to render?
+			void glFlush();
 
 			~gl();
 	};
